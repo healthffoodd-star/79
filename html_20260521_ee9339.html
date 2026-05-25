@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>DocMind Pro | Жёлто-салатовый + голубой • 7 форматов</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* Светлая тема (по умолчанию) */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #fff9c4 0%, #c8e6ff 40%, #b9f6ca 100%);
+            color: #2c5a2a;
+            line-height: 1.5;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Тёмная тема */
+        body.dark-mode {
+            background: linear-gradient(135deg, #0d2818 0%, #1a2a1f 40%, #0f1a12 100%);
+            color: #c8e6d9;
+        }
+        
+        body.dark-mode .header {
+            background: rgba(20, 35, 25, 0.92);
+            border-bottom-color: #2e7d32;
+        }
+        
+        body.dark-mode .logo,
+        body.dark-mode .logo span {
+            color: #8bc34a;
+        }
+        
+        body.dark-mode .nav-tabs {
+            background: #1a3a25cc;
+        }
+        
+        body.dark-mode .tab-btn {
+            color: #b8e6a0;
+        }
+        
+        body.dark-mode .tab-btn.active {
+            background: #2d5a3a;
+            color: #d4ffb0;
+            box-shadow: 0 0 0 1px #5a9a4e, 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        body.dark-mode .btn-outline-light {
+            background: #2a4a35;
+            border-color: #5a9a4e;
+            color: #c8ffb0;
+        }
+        
+        body.dark-mode .btn-outline-light:hover {
+            background: #3a6a45;
+            border-color: #8bc34a;
+        }
+        
+        body.dark-mode .form-card,
+        body.dark-mode .preview-card,
+        body.dark-mode .template-card,
+        body.dark-mode .faq-item,
+        body.dark-mode .rating-section,
+        body.dark-mode .history-panel,
+        body.dark-mode .favorites-panel {
+            background: #1e2a24;
+            border-color: #3a5a45;
+        }
+        
+        body.dark-mode .card-header {
+            background: #253a2e;
+            border-bottom-color: #3a5a45;
+        }
+        
+        body.dark-mode .card-header h2 {
+            color: #b8e6a0;
+        }
+        
+        body.dark-mode .card-header h2 i {
+            color: #8bc34a;
+        }
+        
+        body.dark-mode label {
+            color: #c8e6d9;
+        }
+        
+        body.dark-mode input,
+        body.dark-mode select,
+        body.dark-mode textarea {
+            background: #2a3d30;
+            border-color: #4a6a55;
+            color: #e0ffd0;
+        }
+        
+        body.dark-mode input:focus,
+        body.dark-mode select:focus,
+        body.dark-mode textarea:focus {
+            border-color: #8bc34a;
+            box-shadow: 0 0 0 3px rgba(139,195,74,0.3);
+            background: #354d3e;
+        }
+        
+        body.dark-mode .checkbox-row {
+            background: #253a2e;
+        }
+        
+        body.dark-mode .btn-primary {
+            background: linear-gradient(115deg, #3a6a45, #5a9a4e);
+            color: #e0ffd0;
+        }
+        
+        body.dark-mode .btn-primary:hover {
+            background: linear-gradient(115deg, #4a7a55, #6aaa5e);
+        }
+        
+        body.dark-mode .doc-preview {
+            background: #152018;
+            border-color: #3a5a45;
+        }
+        
+        body.dark-mode .methodic-content {
+            background: #1e2a24;
+        }
+        
+        body.dark-mode .llm-note {
+            background: #253a2e;
+            border-left-color: #8bc34a;
+            color: #c8e6d9;
+        }
+        
+        body.dark-mode .badge-docx {
+            background: #2a5a3a;
+            color: #d4ffb0;
+        }
+        
+        body.dark-mode .format-btn {
+            background: #2a3d30;
+            border-color: #4a6a55;
+            color: #c8e6d9;
+        }
+        
+        body.dark-mode .format-btn:hover {
+            background: #3a5a45;
+        }
+        
+        body.dark-mode .btn-download {
+            background: #3a6a45;
+        }
+        
+        body.dark-mode .btn-download:hover {
+            background: #5a9a4e;
+        }
+        
+        body.dark-mode .template-card:hover {
+            background: #2a3d30;
+            border-color: #8bc34a;
+        }
+        
+        body.dark-mode .use-template-btn {
+            background: #2a3d30;
+            border-color: #5a9a4e;
+            color: #c8ffb0;
+        }
+        
+        body.dark-mode .use-template-btn:hover {
+            background: #3a5a45;
+        }
+        
+        body.dark-mode .faq-question {
+            background: #253a2e;
+            color: #c8ffb0;
+        }
+        
+        body.dark-mode .faq-answer {
+            background: #1e2a24;
+        }
+        
+        body.dark-mode .star {
+            color: #5a6a55;
+        }
+        
+        body.dark-mode .star.active,
+        body.dark-mode .star:hover {
+            color: #f9a825;
+        }
+        
+        body.dark-mode .submit-rating-btn {
+            background: #5a9a4e;
+        }
+        
+        body.dark-mode .submit-rating-btn:hover {
+            background: #7cb342;
+        }
+        
+        body.dark-mode .history-item,
+        body.dark-mode .favorite-item {
+            border-bottom-color: #3a5a45;
+        }
+        
+        body.dark-mode .history-item:hover,
+        body.dark-mode .favorite-item:hover {
+            background: #2a3d30;
+        }
+        
+        body.dark-mode footer {
+            background: #152018cc;
+            border-top-color: #2e7d32;
+            color: #a0c8a0;
+        }
+        
+        body.dark-mode .hero-sub {
+            background: #2a3d30cc;
+            color: #d4ffb0;
+        }
+        
+        body.dark-mode .toast-notification {
+            background: #1a3a25;
+            color: #d4ffb0;
+            border-left-color: #8bc34a;
+        }
+        
+        body.dark-mode .toast-notification.error {
+            background: #5a2a1a;
+            border-left-color: #ff8c42;
+        }
+        
+        body.dark-mode .toast-notification.success {
+            background: #1a5a2a;
+            border-left-color: #a0ff80;
+        }
+        
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 32px; }
+        .header {
+            background: rgba(255, 252, 210, 0.85);
+            backdrop-filter: blur(14px);
+            border-bottom: 2px solid #b8e0a8;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background 0.3s;
+        }
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; flex-wrap: wrap; gap: 20px; }
+        .logo { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.6rem; color: #2e7d32; }
+        .logo i { font-size: 2rem; color: #66bb6a; }
+        .nav-tabs { display: flex; gap: 8px; background: #eef7cfcc; padding: 6px; border-radius: 60px; backdrop-filter: blur(4px); }
+        .tab-btn { background: transparent; border: none; padding: 10px 28px; border-radius: 40px; font-weight: 700; cursor: pointer; font-size: 0.95rem; color: #3e6b3a; transition: 0.2s; }
+        .tab-btn.active { background: #fffde7; color: #558b2f; box-shadow: 0 0 0 1px rgba(200,230,100,0.7), 0 8px 20px rgba(100,180,100,0.15); }
+        .btn-outline-light { background: #fffff0; border: 1.5px solid #b0d683; padding: 8px 24px; border-radius: 40px; font-weight: 700; color: #33691e; cursor: pointer; transition: 0.2s; }
+        .btn-outline-light:hover { background: #e6ffcc; border-color: #7cb342; }
+        .theme-toggle, .example-btn { background: #e6ffcc; border: none; padding: 8px 16px; border-radius: 40px; cursor: pointer; margin-left: 8px; font-weight: 600; transition: 0.2s; }
+        .theme-toggle:hover, .example-btn:hover { background: #c8ffb0; transform: scale(0.97); }
+        .hero { padding: 50px 0 20px; text-align: center; }
+        .hero h1 { font-size: 3rem; font-weight: 800; background: linear-gradient(125deg, #2e7d32, #7cb342, #ffd966); background-clip: text; -webkit-background-clip: text; color: transparent; margin-bottom: 12px; }
+        .hero-sub { font-size: 1.2rem; font-weight: 600; background: rgba(255,250,200,0.7); display: inline-block; padding: 8px 24px; border-radius: 60px; border: 1px solid #cfe6a0; transition: 0.3s; }
+        .tab-content { display: none; animation: fadeUp 0.4s ease; }
+        .tab-content.active-tab { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .generator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 30px 0 50px; }
+        @media (max-width: 900px) { .generator-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 2.2rem; } .container { padding: 0 20px; } }
+        .form-card, .preview-card { background: rgba(255,255,245,0.88); backdrop-filter: blur(3px); border-radius: 38px; border: 1px solid #dcefa8; overflow: hidden; transition: background 0.3s, border 0.3s; }
+        .card-header { padding: 20px 28px; background: linear-gradient(105deg, #fff8dc, #fef9e6); border-bottom: 2px solid #e6f0bc; transition: background 0.3s; }
+        .card-header h2 { font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 10px; color: #3c6e3a; }
+        .card-header h2 i { color: #81c784; }
+        .card-body { padding: 28px; }
+        .form-group { margin-bottom: 22px; }
+        label { display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 8px; color: #386a30; transition: color 0.3s; }
+        label i { color: #81c784; width: 24px; }
+        input, select, textarea { width: 100%; padding: 12px 16px; border-radius: 28px; border: 1.5px solid #d9e6b3; background: #fffff5; transition: background 0.3s, border 0.3s, color 0.3s; }
+        input:focus, select:focus, textarea:focus { border-color: #9ccc65; box-shadow: 0 0 0 3px rgba(156,204,101,0.4); outline: none; }
+        .checkbox-row { display: flex; align-items: center; gap: 12px; margin: 15px 0; background: #fff6df; padding: 12px 20px; border-radius: 48px; transition: background 0.3s; }
+        .btn-primary { background: linear-gradient(115deg, #7cb342, #c0d86d); width: 100%; padding: 14px; border-radius: 60px; font-weight: 800; color: #253c1a; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
+        .btn-primary:hover { transform: translateY(-2px); background: linear-gradient(115deg, #9ccc65, #dced8a); }
+        .doc-preview { background: #feffe6; border-radius: 28px; padding: 20px; max-height: 560px; overflow-y: auto; border: 1px solid #e2f0bc; transition: background 0.3s, border 0.3s; }
+        .methodic-content { background: #fffffb; border-radius: 24px; padding: 24px; word-wrap: break-word; transition: background 0.3s; }
+        .llm-note { background: #fcf9e0; border-left: 5px solid #b2d866; padding: 12px 16px; border-radius: 20px; margin-top: 16px; transition: background 0.3s, border-color 0.3s; }
+        .btn-download { background: #5b8c4e; border: none; padding: 10px 20px; border-radius: 40px; color: white; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .btn-download:hover { background: #7cb342; transform: scale(0.97); }
+        .preview-header { display: flex; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
+        .badge-docx { background: #eef5dc; display: inline-block; padding: 5px 14px; border-radius: 40px; font-size: 0.75rem; font-weight: 700; color: #558b2f; transition: background 0.3s, color 0.3s; }
+        .format-buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; justify-content: center; }
+        .format-btn { background: #fffae6; border: 1px solid #cadd9c; padding: 8px 18px; border-radius: 60px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: 0.2s; }
+        .format-btn:hover { background: #eaffcf; transform: scale(0.96); }
+        .templates-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px; margin: 40px 0 30px; }
+        .template-card { background: #fffef5; border-radius: 36px; padding: 24px; text-align: center; border: 1px solid #e2f0b0; position: relative; cursor: pointer; transition: all 0.25s; }
+        .template-card:hover { transform: translateY(-5px); border-color: #c0e084; background: #fffff0; }
+        .favorite-star { position: absolute; top: 15px; right: 20px; font-size: 1.3rem; cursor: pointer; color: #ddd; transition: 0.2s; }
+        .favorite-star.active { color: #f9a825; }
+        .use-template-btn { background: #f9f5df; border: 1.5px solid #b4d47e; padding: 8px 18px; border-radius: 40px; font-weight: 600; margin-top: 10px; cursor: pointer; transition: 0.2s; }
+        .use-template-btn:hover { background: #dcf2be; transform: scale(0.97); }
+        .faq-section { max-width: 900px; margin: 40px auto; }
+        .faq-item { background: #fffff0; border-radius: 32px; margin-bottom: 20px; border: 1px solid #daeca8; overflow: hidden; transition: background 0.3s, border 0.3s; }
+        .faq-question { padding: 20px 28px; font-weight: 800; display: flex; justify-content: space-between; cursor: pointer; background: #fffbe6; color: #558b2f; transition: background 0.3s, color 0.3s; }
+        .faq-answer { padding: 0 28px; max-height: 0; overflow: hidden; transition: 0.3s ease; background: #fffff9; }
+        .faq-item.open .faq-answer { padding: 0 28px 24px 28px; max-height: 300px; }
+        .rating-section { background: rgba(255,255,245,0.9); border-radius: 38px; padding: 24px 28px; margin: 30px 0 20px; border: 1px solid #cfe6a0; text-align: center; transition: background 0.3s; }
+        .stars-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
+        .star { font-size: 2rem; cursor: pointer; color: #ddd; transition: 0.2s; }
+        .star.active, .star:hover { color: #f9a825; transform: scale(1.1); }
+        .submit-rating-btn { background: #7cb342; border: none; padding: 10px 24px; border-radius: 40px; font-weight: 600; color: white; cursor: pointer; margin-top: 12px; transition: 0.2s; }
+        .submit-rating-btn:hover { background: #558b2f; transform: scale(0.97); }
+        .average-rating { margin-top: 16px; font-size: 0.9rem; font-weight: 600; color: #558b2f; transition: color 0.3s; }
+        .reviews-list { margin-top: 16px; max-height: 150px; overflow-y: auto; font-size: 0.85rem; text-align: left; background: #fffff0; border-radius: 28px; padding: 12px 20px; transition: background 0.3s; }
+        .review-item { padding: 8px 0; border-bottom: 1px solid #e2f0bc; }
+        .review-stars { color: #f9a825; }
+        .history-panel, .favorites-panel { background: rgba(255,255,240,0.8); border-radius: 28px; padding: 15px 20px; margin-top: 20px; font-size: 0.85rem; max-height: 180px; overflow-y: auto; transition: background 0.3s; }
+        .history-item, .favorite-item { padding: 6px 8px; border-bottom: 1px solid #d4e6a0; cursor: pointer; transition: 0.2s; }
+        .history-item:hover, .favorite-item:hover { background: #eaffcf; border-radius: 20px; }
+        .toast-notification { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #2c5a2a; color: #fff9c4; padding: 12px 28px; border-radius: 60px; font-weight: 600; z-index: 9999; display: flex; align-items: center; gap: 12px; animation: fadeInUp 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: background 0.3s; }
+        .toast-notification.error { background: #a52a1a; }
+        .toast-notification.success { background: #2e7d32; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateX(-50%) translateY(20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        footer { background: #fffde0cc; backdrop-filter: blur(6px); border-top: 2px solid #cee6a0; padding: 36px 0; margin-top: 60px; text-align: center; transition: background 0.3s, border-color 0.3s; }
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="container">
+        <div class="nav-bar">
+            <div class="logo"><i class="fas fa-leaf"></i><span>DocMind<span style="font-weight:500"> | Методички AI</span></span></div>
+            <div class="nav-tabs">
+                <button class="tab-btn active" data-tab="constructor"><i class="fas fa-magic"></i> Конструктор</button>
+                <button class="tab-btn" data-tab="templates"><i class="fas fa-file-word"></i> Шаблоны</button>
+                <button class="tab-btn" data-tab="faq"><i class="fas fa-question-circle"></i> FAQ</button>
+            </div>
+            <div>
+                <button class="btn-outline-light" id="apiBtn"><i class="fas fa-cloud-upload-alt"></i> API</button>
+                <button class="theme-toggle" id="themeToggleBtn"><i class="fas fa-moon"></i> Тема</button>
+                <button class="example-btn" id="exampleFillBtn"><i class="fas fa-fill-drip"></i> Пример</button>
+            </div>
+        </div>
+    </div>
+</header>
+<main class="container">
+    <div class="hero">
+        <h1>Автоматическое создание методичек</h1>
+        <div class="hero-sub"><i class="fas fa-file-export"></i> 7 форматов экспорта: DOCX, PDF, Markdown, HTML, EPUB, JSON, TXT</div>
+    </div>
+    <div id="constructorTab" class="tab-content active-tab">
+        <div class="generator-grid">
+            <div class="form-card">
+                <div class="card-header"><h2><i class="fas fa-pen-ruler"></i> Заполните данные</h2></div>
+                <div class="card-body">
+                    <div class="form-group"><label><i class="fas fa-book"></i> Дисциплина / Тема</label><input type="text" id="discipline" value="Кроссплатформенная разработка"></div>
+                    <div class="form-group"><label><i class="fas fa-users"></i> Целевая аудитория</label><input type="text" id="audience" value="Студенты IT-направлений"></div>
+                    <div class="form-group"><label><i class="fas fa-list-ul"></i> Ключевые темы</label><textarea id="topics" rows="2">Figma, прототипирование, юзабилити-тестирование, дизайн-системы</textarea></div>
+                    <div class="form-group"><label><i class="fas fa-file-alt"></i> Выбор шаблона</label><select id="templateSelect"><option value="standard">📘 Академический</option><option value="business">💼 Бизнес / Agile</option><option value="lab">🧪 Лабораторный</option></select></div>
+                    <div class="checkbox-row"><input type="checkbox" id="llmEnrich" checked><label><i class="fas fa-robot"></i> LLM-обогащение</label></div>
+                    <button class="btn-primary" id="generateBtn"><i class="fas fa-sync-alt"></i> Создать методичку</button>
+                </div>
+            </div>
+            <div class="preview-card">
+                <div class="card-header"><h2><i class="fas fa-eye"></i> Предпросмотр & экспорт</h2></div>
+                <div class="card-body">
+                    <div class="preview-header"><span class="badge-docx"><i class="fas fa-file-word"></i> .DOCX готов</span><button id="downloadDocxBtn" class="btn-download"><i class="fas fa-download"></i> .docx</button></div>
+                    <div id="docPreviewContainer" class="doc-preview"><div class="methodic-content" id="methodicPreview"><p>Нажмите «Создать методичку»</p></div></div>
+                    <div class="format-buttons">
+                        <button class="format-btn" id="exportPDFBtn">PDF</button>
+                        <button class="format-btn" id="exportMarkdownBtn">Markdown</button>
+                        <button class="format-btn" id="exportHTMLBtn">HTML</button>
+                        <button class="format-btn" id="exportEPUBBtn">EPUB</button>
+                        <button class="format-btn" id="exportJSONBtn">JSON</button>
+                        <button class="format-btn" id="exportTXTBtn">TXT</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="history-panel"><strong><i class="fas fa-history"></i> История генераций:</strong> <div id="historyList">(пока пусто)</div></div>
+    </div>
+    <div id="templatesTab" class="tab-content">
+        <div class="templates-grid">
+            <div class="template-card" data-template-type="standard" data-discipline="Методология научных исследований" data-audience="Магистранты, аспиранты" data-topics="Научная этика, структура статей, источники"><i class="fas fa-landmark"></i><h4>Академический стандарт</h4><div class="badge-docx">ВУЗ</div><button class="use-template-btn">Использовать</button><div class="favorite-star" data-fav="academic"><i class="far fa-star"></i></div></div>
+            <div class="template-card" data-template-type="business" data-discipline="Управление продуктом и Agile" data-audience="Project managers" data-topics="Scrum, KPI, Roadmap, OKR"><i class="fas fa-chart-line"></i><h4>Бизнес / Agile</h4><div class="badge-docx">Lean</div><button class="use-template-btn">Использовать</button><div class="favorite-star" data-fav="business"><i class="far fa-star"></i></div></div>
+            <div class="template-card" data-template-type="lab" data-discipline="Программирование на Python" data-audience="Студенты 2-3 курсов" data-topics="ООП, NumPy, Pandas, визуализация"><i class="fas fa-flask"></i><h4>Лабораторный практикум</h4><div class="badge-docx">IT</div><button class="use-template-btn">Использовать</button><div class="favorite-star" data-fav="lab"><i class="far fa-star"></i></div></div>
+            <div class="template-card" data-template-type="business" data-discipline="Эффективные коммуникации" data-audience="HR, Team leads" data-topics="Обратная связь, конфликтология, фасилитация"><i class="fas fa-briefcase"></i><h4>Корпоративное обучение</h4><div class="badge-docx">Soft skills</div><button class="use-template-btn">Использовать</button><div class="favorite-star" data-fav="corp"><i class="far fa-star"></i></div></div>
+        </div>
+        <div class="favorites-panel"><strong><i class="fas fa-heart"></i> Избранные шаблоны:</strong> <div id="favoritesList">(нет избранных)</div></div>
+    </div>
+    <div id="faqTab" class="tab-content">
+        <div class="faq-section">
+            <div class="faq-item"><div class="faq-question">Какие форматы экспорта? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">DOCX, PDF, Markdown, HTML, EPUB, JSON, TXT</div></div>
+            <div class="faq-item"><div class="faq-question">Как работает LLM-обогащение? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">AI добавляет кейсы, метрики, задания, глоссарий</div></div>
+            <div class="rating-section">
+                <div><i class="fas fa-star" style="color:#f9a825;"></i> <strong>Оцените работу сервиса</strong></div>
+                <div class="stars-container" id="starsContainer">
+                    <i class="fas fa-star star" data-value="1"></i><i class="fas fa-star star" data-value="2"></i>
+                    <i class="fas fa-star star" data-value="3"></i><i class="fas fa-star star" data-value="4"></i><i class="fas fa-star star" data-value="5"></i>
+                </div>
+                <textarea id="reviewText" rows="2" placeholder="Ваш отзыв (необязательно)" style="width:100%; max-width:500px; border-radius:20px; padding:10px; margin-top:10px;"></textarea>
+                <button class="submit-rating-btn" id="submitRatingBtn">Отправить оценку</button>
+                <div class="average-rating" id="averageRatingDisplay">⭐ Средняя оценка: пока нет оценок</div>
+                <div class="reviews-list" id="reviewsList"><div>Отзывы появятся здесь</div></div>
+            </div>
+        </div>
+    </div>
+</main>
+<footer><div class="container"><p><strong>DocMind — 7 форматов экспорта:</strong> DOCX, PDF, Markdown, HTML, EPUB, JSON, TXT</p><p>© 2025 • DocMind Pro</p></div></footer>
+
+<script>
+    // Генерация контента
+    function generateMethodicContent(discipline, audience, topicsRaw, templateType, isEnrich) {
+        let topicsList = topicsRaw.split(',').map(t => t.trim()).filter(t => t);
+        let topicsStr = topicsList.join(', ');
+        
+        let introText = `Методическое пособие «${discipline}» предназначено для ${audience}. 
+        Цель — сформировать практические компетенции в области ${topicsStr || 'профильных дисциплин'}. 
+        Пособие включает теоретический минимум, практические задания и контрольные вопросы.`;
+        
+        let theoryText = `<strong>Ключевые понятия:</strong> ${topicsStr}.
+        <br><br><strong>Основные принципы:</strong> В основе дисциплины лежат принципы системности, практико-ориентированности и непрерывного развития.
+        <br><br><strong>Современные подходы:</strong> Анализ актуальных трендов показывает, что ведущую роль играют цифровая трансформация и инновационные методы.`;
+        
+        let practicalText = `<strong>Задание 1. Анализ кейса</strong><br>Разберите ситуацию, выявите проблему и предложите решение с использованием методов ${topicsList[0] || 'анализа'}.
+        <br><br><strong>Задание 2. Разработка проекта</strong><br>Создайте проект по теме «Применение ${topicsStr} на практике».
+        <br><br><strong>Задание 3. Групповая дискуссия</strong><br>Тема: «Перспективы развития ${discipline}».
+        <br><br><strong>Задание 4. Исследовательская работа</strong><br>Проведите мини-исследование эффективности одного из изучаемых методов.`;
+        
+        let controlText = `<strong>Вопросы для самопроверки:</strong><br>
+        1. Каковы цели изучения дисциплины «${discipline}»?<br>
+        2. Опишите ключевые принципы ${topicsStr}.<br>
+        3. Какие инструменты используются в профессиональной деятельности?<br>
+        4. Приведите пример успешного применения полученных знаний.<br>
+        5. Каковы перспективы развития данной области?<br><br>
+        <strong>Критерии оценки:</strong> Отлично (90-100%), Хорошо (75-89%), Удовлетворительно (60-74%), Неудовлетворительно (<60%).`;
+        
+        let bibliographyText = `<strong>Основная литература:</strong><br>
+        • Иванов А.А. «Современные аспекты ${discipline}». — М.: Наука, 2024.<br>
+        • Петрова Е.В. «Практикум по ${topicsStr}». — СПб.: Питер, 2023.<br>
+        <strong>Интернет-ресурсы:</strong> открытые онлайн-курсы (Coursera, Stepik), профессиональные сообщества.`;
+        
+        let llmBlock = '';
+        if (isEnrich) {
+            llmBlock = `<div class="llm-note"><i class="fas fa-robot"></i> <strong>LLM-обогащение:</strong><br><br>
+            <strong>📊 Актуальный кейс 2025:</strong> Компания «TechInnovate» внедрила методологию и достигла роста эффективности на 37%.<br><br>
+            <strong>📈 Ключевые метрики:</strong> Уровень освоения (85%), индекс удовлетворенности (4.5/5).<br><br>
+            <strong>🤖 AI-рекомендации:</strong> Используйте микробучение, геймификацию и адаптивное тестирование.<br><br>
+            <strong>📚 Глоссарий:</strong><br>
+            ${topicsList.map(t => `• ${t} — профессиональный термин, обозначающий комплекс методов и подходов.`).join('<br>')}</div>`;
+        } else {
+            llmBlock = `<div class="llm-note"><i class="fas fa-ban"></i> LLM-обогащение отключено. Включите опцию для получения кейсов и рекомендаций.</div>`;
+        }
+        
+        let headerHtml = `<div class="badge-docx"><i class="fas fa-file-word"></i> Шаблон: ${templateType === 'standard' ? 'Академический' : templateType === 'business' ? 'Корпоративный' : 'Лабораторный'} • ${new Date().toLocaleDateString()}</div>
+        <h1 style="border-bottom:2px solid #b2d866; padding-bottom:8px;">📘 ${discipline}</h1>
+        <p><strong>👥 Аудитория:</strong> ${audience}</p>
+        <p><strong>📌 Темы:</strong> ${topicsStr || 'базовые разделы'}</p>
+        <hr style="margin: 16px 0;">`;
+        
+        let sections = [];
+        if (templateType === 'standard') {
+            sections = [
+                `<h2>📖 1. Введение</h2><p>${introText}</p>`,
+                `<h2>📚 2. Теоретическая часть</h2><p>${theoryText}</p>`,
+                `<h2>✍️ 3. Практические задания</h2><p>${practicalText}</p>`,
+                `<h2>📝 4. Контроль знаний</h2><p>${controlText}</p>`,
+                `<h2>📖 5. Литература</h2><p>${bibliographyText}</p>`
+            ];
+        } else if (templateType === 'business') {
+            sections = [
+                `<h2>📊 1. Executive Summary</h2><p>${introText}</p>`,
+                `<h2>🎯 2. Стратегический фреймворк</h2><p>${theoryText}</p>`,
+                `<h2>🛠 3. Инструментарий</h2><p>${practicalText}</p>`,
+                `<h2>📈 4. Метрики и KPI</h2><p>${controlText}</p>`
+            ];
+        } else {
+            sections = [
+                `<h2>🧪 1. Цель лабораторного цикла</h2><p>${introText}</p>`,
+                `<h2>🔬 2. Теоретическая подготовка</h2><p>${theoryText}</p>`,
+                `<h2>🧫 3. Ход выполнения</h2><p>${practicalText}</p>`,
+                `<h2>📑 4. Отчётность</h2><p>${controlText}</p>`
+            ];
+        }
+        
+        return headerHtml + sections.join('<hr style="margin: 20px 0;">') + `<hr style="margin: 20px 0;">${llmBlock}`;
+    }
+    
+    function getCurrentMethodicData() {
+        let discipline = document.getElementById('discipline').value.trim() || "Методичка";
+        let audience = document.getElementById('audience').value.trim() || "Слушатели";
+        let topics = document.getElementById('topics').value.trim() || "основы";
+        let template = document.getElementById('templateSelect').value;
+        let llm = document.getElementById('llmEnrich').checked;
+        let htmlContent = generateMethodicContent(discipline, audience, topics, template, llm);
+        return { discipline, audience, topics, template, llm, htmlContent };
+    }
+    
+    function updatePreviewFromForm() {
+        let data = getCurrentMethodicData();
+        document.getElementById('methodicPreview').innerHTML = data.htmlContent;
+    }
+    
+    function showUserMessage(message, type = 'info') {
+        let toast = document.createElement('div');
+        toast.className = `toast-notification ${type === 'error' ? 'error' : (type === 'success' ? 'success' : '')}`;
+        toast.innerHTML = `${type === 'error' ? '⚠️' : (type === 'success' ? '✅' : 'ℹ️')} ${message}`;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 4000);
+    }
+    
+    function isFormValid() {
+        return document.getElementById('discipline').value.trim() && 
+               document.getElementById('audience').value.trim() && 
+               document.getElementById('topics').value.trim();
+    }
+    
+    // История
+    let generationHistory = JSON.parse(localStorage.getItem('docmind_history') || '[]');
+    function updateHistoryPanel() {
+        let container = document.getElementById('historyList');
+        if(!container) return;
+        if(generationHistory.length === 0) { container.innerHTML = '(пока пусто)'; return; }
+        container.innerHTML = generationHistory.slice(-5).reverse().map((h, idx) => `<div class="history-item" data-idx="${idx}">📄 ${h.discipline} — ${new Date(h.date).toLocaleString()}</div>`).join('');
+        document.querySelectorAll('.history-item').forEach(el => {
+            el.addEventListener('click', () => {
+                let idx = parseInt(el.getAttribute('data-idx'));
+                let item = generationHistory.slice(-5).reverse()[idx];
+                if(item) {
+                    document.getElementById('discipline').value = item.discipline;
+                    document.getElementById('audience').value = item.audience;
+                    document.getElementById('topics').value = item.topics;
+                    updatePreviewFromForm();
+                    showUserMessage(`Загружено из истории: ${item.discipline}`, "success");
+                }
+            });
+        });
+    }
+    function addToHistory(discipline, audience, topics) {
+        generationHistory.unshift({ discipline, audience, topics, date: new Date().toISOString() });
+        if(generationHistory.length > 20) generationHistory.pop();
+        localStorage.setItem('docmind_history', JSON.stringify(generationHistory));
+        updateHistoryPanel();
+    }
+    
+    // Избранное
+    let favorites = JSON.parse(localStorage.getItem('docmind_favorites') || '[]');
+    function updateFavoritesPanel() {
+        let container = document.getElementById('favoritesList');
+        if(!container) return;
+        if(favorites.length === 0) { container.innerHTML = '(нет избранных)'; return; }
+        container.innerHTML = favorites.map(f => `<div class="favorite-item" data-fav="${f.id}">⭐ ${f.name}</div>`).join('');
+        document.querySelectorAll('.favorite-item').forEach(el => {
+            el.addEventListener('click', () => {
+                let id = el.getAttribute('data-fav');
+                let fav = favorites.find(f => f.id === id);
+                if(fav) {
+                    document.getElementById('discipline').value = fav.discipline;
+                    document.getElementById('audience').value = fav.audience;
+                    document.getElementById('topics').value = fav.topics;
+                    updatePreviewFromForm();
+                    showUserMessage(`Избранное: ${fav.name}`, "success");
+                }
+            });
+        });
+        document.querySelectorAll('.favorite-star').forEach(star => {
+            let favId = star.getAttribute('data-fav');
+            if(favorites.some(f => f.id === favId)) { star.innerHTML = '<i class="fas fa-star"></i>'; star.classList.add('active'); }
+            else { star.innerHTML = '<i class="far fa-star"></i>'; star.classList.remove('active'); }
+        });
+    }
+    function toggleFavorite(card, id, name, discipline, audience, topics) {
+        let idx = favorites.findIndex(f => f.id === id);
+        if(idx === -1) {
+            favorites.push({ id, name, discipline, audience, topics });
+            showUserMessage(`⭐ "${name}" добавлен в избранное`, "success");
+        } else {
+            favorites.splice(idx, 1);
+            showUserMessage(`💔 "${name}" удалён из избранного`, "info");
+        }
+        localStorage.setItem('docmind_favorites', JSON.stringify(favorites));
+        updateFavoritesPanel();
+    }
+    
+    // Оценки
+    let ratings = JSON.parse(localStorage.getItem('docmind_ratings') || '[]');
+    function updateRatingDisplay() {
+        if(ratings.length === 0) {
+            document.getElementById('averageRatingDisplay').innerHTML = '⭐ Средняя оценка: пока нет оценок';
+            document.getElementById('reviewsList').innerHTML = '<div>Отзывы появятся здесь</div>';
+            return;
+        }
+        let sum = ratings.reduce((a, r) => a + r.rating, 0);
+        let avg = (sum / ratings.length).toFixed(1);
+        document.getElementById('averageRatingDisplay').innerHTML = `⭐ Средняя оценка: ${avg} / 5 (${ratings.length} оценок)`;
+        document.getElementById('reviewsList').innerHTML = ratings.slice().reverse().map(r => `<div class="review-item"><div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div><div>${r.comment || 'Без комментария'}</div><div style="font-size:0.7rem;">${new Date(r.date).toLocaleString()}</div></div>`).join('');
+    }
+    let selectedRating = 0;
+    document.querySelectorAll('.star').forEach(star => {
+        star.addEventListener('click', () => {
+            selectedRating = parseInt(star.getAttribute('data-value'));
+            document.querySelectorAll('.star').forEach(s => {
+                if(parseInt(s.getAttribute('data-value')) <= selectedRating) s.classList.add('active');
+                else s.classList.remove('active');
+            });
+        });
+    });
+    document.getElementById('submitRatingBtn')?.addEventListener('click', () => {
+        if(selectedRating === 0) { showUserMessage("Выберите оценку от 1 до 5 звёзд", "error"); return; }
+        let reviewText = document.getElementById('reviewText').value.trim();
+        ratings.push({ rating: selectedRating, comment: reviewText, date: new Date().toISOString() });
+        localStorage.setItem('docmind_ratings', JSON.stringify(ratings));
+        selectedRating = 0;
+        document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
+        document.getElementById('reviewText').value = '';
+        updateRatingDisplay();
+        showUserMessage("Спасибо за вашу оценку! ❤️", "success");
+    });
+    
+    // Тема (переключение между светлой и тёмной)
+    let darkMode = localStorage.getItem('docmind_dark') === 'true';
+    if(darkMode) document.body.classList.add('dark-mode');
+    document.getElementById('themeToggleBtn')?.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        let isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem('docmind_dark', isDark);
+        showUserMessage(isDark ? "🌙 Тёмная тема включена" : "☀️ Светлая тема включена", "success");
+    });
+    
+    // Автозаполнение примером
+    document.getElementById('exampleFillBtn')?.addEventListener('click', () => {
+        document.getElementById('discipline').value = "Искусственный интеллект в образовании";
+        document.getElementById('audience').value = "Преподаватели, методисты, EdTech-специалисты";
+        document.getElementById('topics').value = "Нейросети, персонализация, адаптивное обучение, этика AI";
+        updatePreviewFromForm();
+        showUserMessage("Пример загружен! Нажмите «Создать методичку»", "success");
+    });
+    
+    // Генерация
+    document.getElementById('generateBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        if(!isFormValid()) {
+            showUserMessage("❌ Ошибка: заполните все поля", "error");
+            return;
+        }
+        showUserMessage("⏳ Методичка генерируется, подождите...", "info");
+        setTimeout(() => {
+            try {
+                updatePreviewFromForm();
+                let data = getCurrentMethodicData();
+                addToHistory(data.discipline, data.audience, data.topics);
+                showUserMessage("✅ Готово! Скачать файл можно в любом формате", "success");
+            } catch(err) {
+                showUserMessage("⚠️ Ошибка: сервис недоступен, попробуйте позже", "error");
+            }
+        }, 500);
+    });
+    
+    // Экспорт DOCX
+    async function downloadDocx() {
+        if(!isFormValid()) { showUserMessage("❌ Заполните все поля", "error"); return; }
+        showUserMessage("📄 Формирование DOCX...", "info");
+        try {
+            let { discipline, audience, topics, template, llm, htmlContent } = getCurrentMethodicData();
+            const { Document, Paragraph, TextRun, HeadingLevel, Packer, AlignmentType } = window.docx;
+            let tempDiv = document.createElement('div'); tempDiv.innerHTML = htmlContent;
+            let paragraphs = [new Paragraph({ children: [new TextRun({ text: discipline, bold: true, size: 32 })], alignment: AlignmentType.CENTER }), new Paragraph({ text: `Аудитория: ${audience}` }), new Paragraph({ text: `Темы: ${topics}` })];
+            for (let h of tempDiv.querySelectorAll('h1, h2, h3')) {
+                let level = h.tagName === 'H1' ? HeadingLevel.HEADING_1 : (h.tagName === 'H2' ? HeadingLevel.HEADING_2 : HeadingLevel.HEADING_3);
+                paragraphs.push(new Paragraph({ text: h.innerText.trim(), heading: level, spacing: { before: 200 } }));
+            }
+            for (let p of tempDiv.querySelectorAll('p')) { let txt = p.innerText.trim(); if(txt) paragraphs.push(new Paragraph({ text: txt, spacing: { after: 120 } })); }
+            const doc = new Document({ sections: [{ children: paragraphs }] });
+            const blob = await Packer.toBlob(doc);
+            saveAs(blob, `Methodology_${discipline.replace(/\s/g, '_')}.docx`);
+            showUserMessage("✅ DOCX успешно скачан", "success");
+        } catch(e) { showUserMessage("⚠️ Ошибка при создании DOCX", "error"); }
+    }
+    
+    async function exportPDF() {
+        if(!isFormValid()) { showUserMessage("❌ Заполните поля", "error"); return; }
+        showUserMessage("📑 Подготовка PDF...", "info");
+        let previewDiv = document.getElementById('methodicPreview').cloneNode(true);
+        let wrapper = document.createElement('div'); wrapper.style.padding='20px'; wrapper.style.background='white'; wrapper.appendChild(previewDiv);
+        html2pdf().set({ margin: 0.5, filename: `methodic.pdf` }).from(wrapper).save();
+        showUserMessage("✅ PDF скачан", "success");
+    }
+    
+    function exportMarkdown() {
+        if(!isFormValid()) { showUserMessage("❌ Заполните поля", "error"); return; }
+        let { discipline, audience, topics, htmlContent } = getCurrentMethodicData();
+        let temp = document.createElement('div'); temp.innerHTML = htmlContent;
+        let md = `# ${discipline}\n\n**Аудитория:** ${audience}\n\n**Темы:** ${topics}\n\n---\n\n`;
+        for(let h of temp.querySelectorAll('h1, h2, h3')) md += `${'#'.repeat(h.tagName === 'H1' ? 1 : (h.tagName === 'H2' ? 2 : 3))} ${h.innerText.trim()}\n\n`;
+        for(let p of temp.querySelectorAll('p')) if(p.innerText.trim()) md += `${p.innerText.trim()}\n\n`;
+        saveAs(new Blob([md], {type: 'text/markdown'}), `methodic.md`);
+        showUserMessage("✅ Markdown сохранён", "success");
+    }
+    
+    function exportHTML() {
+        if(!isFormValid()) { showUserMessage("❌ Заполните поля", "error"); return; }
+        let { discipline, htmlContent } = getCurrentMethodicData();
+        let fullHtml = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${discipline}</title><style>body{font-family:Inter;max-width:1000px;margin:40px auto;padding:20px;line-height:1.6}</style></head><body>${htmlContent}</body></html>`;
+        saveAs(new Blob([fullHtml], {type: 'text/html'}), `methodic.html`);
+        showUserMessage("✅ HTML готов", "success");
+    }
+    
+    function exportJSON() {
+        if(!isFormValid()) { showUserMessage("❌ Заполните поля", "error"); return; }
+        let data = getCurrentMethodicData();
+        let jsonObj = { title: data.discipline, audience: data.audience, topics: data.topics.split(','), templateType: data.template, llm_enriched: data.llm, content_html: data.htmlContent };
+        saveAs(new Blob([JSON.stringify(jsonObj, null, 2)], {type: 'application/json'}), `methodic.json`);
+        showUserMessage("✅ JSON экспортирован", "success");
+    }
+    
+    function exportTXT() {
+        if(!isFormValid()) { showUserMessage("❌ Заполните поля", "error"); return; }
+        let { discipline, audience, topics, htmlContent } = getCurrentMethodicData();
+        let temp = document.createElement('div'); temp.innerHTML = htmlContent;
+        let plain = `${discipline}\nАудитория: ${audience}\nТемы: ${topics}\n\n` + Array.from(temp.querySelectorAll('h1,h2,h3,p')).map(el => el.innerText.trim()).join('\n\n');
+        saveAs(new Blob([plain], {type: 'text/plain'}), `methodic.txt`);
+        showUserMessage("✅ TXT сохранён", "success");
+    }
+    
+    function exportEPUB() {
+        if(!isFormValid()) { showUserMessage("❌ Заполните поля", "error"); return; }
+        saveAs(new Blob(["EPUB demo"], {type: 'application/epub+zip'}), `methodic.epub`);
+        showUserMessage("✅ EPUB (демо) готов", "success");
+    }
+    
+    document.getElementById('downloadDocxBtn').addEventListener('click', downloadDocx);
+    document.getElementById('exportPDFBtn').addEventListener('click', exportPDF);
+    document.getElementById('exportMarkdownBtn').addEventListener('click', exportMarkdown);
+    document.getElementById('exportHTMLBtn').addEventListener('click', exportHTML);
+    document.getElementById('exportJSONBtn').addEventListener('click', exportJSON);
+    document.getElementById('exportTXTBtn').addEventListener('click', exportTXT);
+    document.getElementById('exportEPUBBtn').addEventListener('click', exportEPUB);
+    
+    function fillFormFromTemplate(data) {
+        document.getElementById('discipline').value = data.discipline;
+        document.getElementById('audience').value = data.audience;
+        document.getElementById('topics').value = data.topics;
+        document.getElementById('templateSelect').value = data.templateType;
+        document.getElementById('llmEnrich').checked = true;
+        updatePreviewFromForm();
+        document.querySelector('.tab-btn[data-tab="constructor"]').click();
+        showUserMessage(`✅ Шаблон "${data.discipline}" загружен`, "success");
+    }
+    
+    document.querySelectorAll('.use-template-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            let card = btn.closest('.template-card');
+            if(card) fillFormFromTemplate({
+                discipline: card.getAttribute('data-discipline'),
+                audience: card.getAttribute('data-audience'),
+                topics: card.getAttribute('data-topics'),
+                templateType: card.getAttribute('data-template-type')
+            });
+        });
+    });
+    
+    document.querySelectorAll('.favorite-star').forEach(star => {
+        star.addEventListener('click', (e) => {
+            e.stopPropagation();
+            let card = star.closest('.template-card');
+            let id = star.getAttribute('data-fav');
+            let name = card.querySelector('h4')?.innerText || '';
+            let discipline = card.getAttribute('data-discipline');
+            let audience = card.getAttribute('data-audience');
+            let topics = card.getAttribute('data-topics');
+            toggleFavorite(card, id, name, discipline, audience, topics);
+        });
+    });
+    
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = {
+        constructor: document.getElementById('constructorTab'),
+        templates: document.getElementById('templatesTab'),
+        faq: document.getElementById('faqTab')
+    };
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            let id = btn.getAttribute('data-tab');
+            Object.keys(tabContents).forEach(k => tabContents[k].classList.remove('active-tab'));
+            tabContents[id].classList.add('active-tab');
+            tabBtns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        });
+    });
+    
+    document.querySelectorAll('.faq-question').forEach(q => {
+        q.addEventListener('click', () => q.closest('.faq-item').classList.toggle('open'));
+    });
+    
+    document.getElementById('apiBtn').addEventListener('click', () => showUserMessage("ℹ️ API DocMind — интеграция с LMS", "info"));
+    
+    updatePreviewFromForm();
+    updateHistoryPanel();
+    updateFavoritesPanel();
+    updateRatingDisplay();
+</script>
+</body>
+</html>
