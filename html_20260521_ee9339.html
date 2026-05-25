@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>DocMind Pro | Жёлто-салатовый + голубой • 7 форматов</title>
+    <title>DocMind</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
@@ -322,7 +322,7 @@
 <header class="header">
     <div class="container">
         <div class="nav-bar">
-            <div class="logo"><i class="fas fa-leaf"></i><span>DocMind<span style="font-weight:500"> | Методички AI</span></span></div>
+            <div class="logo"><i class="fas fa-leaf"></i><span>DocMind<span style="font-weight:500"> | Методички</span></span></div>
             <div class="nav-tabs">
                 <button class="tab-btn active" data-tab="constructor"><i class="fas fa-magic"></i> Конструктор</button>
                 <button class="tab-btn" data-tab="templates"><i class="fas fa-file-word"></i> Шаблоны</button>
@@ -350,7 +350,7 @@
                     <div class="form-group"><label><i class="fas fa-users"></i> Целевая аудитория</label><input type="text" id="audience" value="Студенты IT-направлений"></div>
                     <div class="form-group"><label><i class="fas fa-list-ul"></i> Ключевые темы</label><textarea id="topics" rows="2">Figma, прототипирование, юзабилити-тестирование, дизайн-системы</textarea></div>
                     <div class="form-group"><label><i class="fas fa-file-alt"></i> Выбор шаблона</label><select id="templateSelect"><option value="standard">📘 Академический</option><option value="business">💼 Бизнес / Agile</option><option value="lab">🧪 Лабораторный</option></select></div>
-                    <div class="checkbox-row"><input type="checkbox" id="llmEnrich" checked><label><i class="fas fa-robot"></i> LLM-обогащение</label></div>
+                    <div class="checkbox-row"><input type="checkbox" id="llmEnrich" checked><label><i class="fas fa-chart-line"></i> Дополнительные кейсы и метрики</label></div>
                     <button class="btn-primary" id="generateBtn"><i class="fas fa-sync-alt"></i> Создать методичку</button>
                 </div>
             </div>
@@ -384,7 +384,7 @@
     <div id="faqTab" class="tab-content">
         <div class="faq-section">
             <div class="faq-item"><div class="faq-question">Какие форматы экспорта? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">DOCX, PDF, Markdown, HTML, EPUB, JSON, TXT</div></div>
-            <div class="faq-item"><div class="faq-question">Как работает LLM-обогащение? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">AI добавляет кейсы, метрики, задания, глоссарий</div></div>
+            <div class="faq-item"><div class="faq-question">Как работает режим доп. материалов? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Добавляет практические кейсы, метрики оценки, глоссарий и рекомендации по внедрению</div></div>
             <div class="rating-section">
                 <div><i class="fas fa-star" style="color:#f9a825;"></i> <strong>Оцените работу сервиса</strong></div>
                 <div class="stars-container" id="starsContainer">
@@ -399,7 +399,7 @@
         </div>
     </div>
 </main>
-<footer><div class="container"><p><strong>DocMind — 7 форматов экспорта:</strong> DOCX, PDF, Markdown, HTML, EPUB, JSON, TXT</p><p>© 2025 • DocMind Pro</p></div></footer>
+<footer><div class="container"><p><strong>DocMind — 7 форматов экспорта:</strong> DOCX, PDF, Markdown, HTML, EPUB, JSON, TXT</p><p>© 2025 • DocMind</p></div></footer>
 
 <script>
     // Генерация контента
@@ -433,16 +433,16 @@
         • Петрова Е.В. «Практикум по ${topicsStr}». — СПб.: Питер, 2023.<br>
         <strong>Интернет-ресурсы:</strong> открытые онлайн-курсы (Coursera, Stepik), профессиональные сообщества.`;
         
-        let llmBlock = '';
+        let enrichBlock = '';
         if (isEnrich) {
-            llmBlock = `<div class="llm-note"><i class="fas fa-robot"></i> <strong>LLM-обогащение:</strong><br><br>
-            <strong>📊 Актуальный кейс 2025:</strong> Компания «TechInnovate» внедрила методологию и достигла роста эффективности на 37%.<br><br>
+            enrichBlock = `<div class="llm-note"><i class="fas fa-chart-simple"></i> <strong>Дополнительные материалы:</strong><br><br>
+            <strong>📊 Практический кейс:</strong> Компания «Технолидер» внедрила данные подходы и достигла роста эффективности на 37%.<br><br>
             <strong>📈 Ключевые метрики:</strong> Уровень освоения (85%), индекс удовлетворенности (4.5/5).<br><br>
-            <strong>🤖 AI-рекомендации:</strong> Используйте микробучение, геймификацию и адаптивное тестирование.<br><br>
+            <strong>💡 Рекомендации:</strong> Используйте микробучение, геймификацию и адаптивное тестирование.<br><br>
             <strong>📚 Глоссарий:</strong><br>
             ${topicsList.map(t => `• ${t} — профессиональный термин, обозначающий комплекс методов и подходов.`).join('<br>')}</div>`;
         } else {
-            llmBlock = `<div class="llm-note"><i class="fas fa-ban"></i> LLM-обогащение отключено. Включите опцию для получения кейсов и рекомендаций.</div>`;
+            enrichBlock = `<div class="llm-note"><i class="fas fa-ban"></i> Дополнительные материалы отключены. Включите опцию для получения кейсов и рекомендаций.</div>`;
         }
         
         let headerHtml = `<div class="badge-docx"><i class="fas fa-file-word"></i> Шаблон: ${templateType === 'standard' ? 'Академический' : templateType === 'business' ? 'Корпоративный' : 'Лабораторный'} • ${new Date().toLocaleDateString()}</div>
@@ -476,7 +476,7 @@
             ];
         }
         
-        return headerHtml + sections.join('<hr style="margin: 20px 0;">') + `<hr style="margin: 20px 0;">${llmBlock}`;
+        return headerHtml + sections.join('<hr style="margin: 20px 0;">') + `<hr style="margin: 20px 0;">${enrichBlock}`;
     }
     
     function getCurrentMethodicData() {
@@ -610,7 +610,7 @@
         showUserMessage("Спасибо за вашу оценку! ❤️", "success");
     });
     
-    // Тема (переключение между светлой и тёмной)
+    // Тема
     let darkMode = localStorage.getItem('docmind_dark') === 'true';
     if(darkMode) document.body.classList.add('dark-mode');
     document.getElementById('themeToggleBtn')?.addEventListener('click', () => {
@@ -649,7 +649,7 @@
         }, 500);
     });
     
-    // Экспорт DOCX
+    // Экспорт
     async function downloadDocx() {
         if(!isFormValid()) { showUserMessage("❌ Заполните все поля", "error"); return; }
         showUserMessage("📄 Формирование DOCX...", "info");
@@ -701,7 +701,7 @@
     function exportJSON() {
         if(!isFormValid()) { showUserMessage("❌ Заполните поля", "error"); return; }
         let data = getCurrentMethodicData();
-        let jsonObj = { title: data.discipline, audience: data.audience, topics: data.topics.split(','), templateType: data.template, llm_enriched: data.llm, content_html: data.htmlContent };
+        let jsonObj = { title: data.discipline, audience: data.audience, topics: data.topics.split(','), templateType: data.template, enriched: data.llm, content_html: data.htmlContent };
         saveAs(new Blob([JSON.stringify(jsonObj, null, 2)], {type: 'application/json'}), `methodic.json`);
         showUserMessage("✅ JSON экспортирован", "success");
     }
