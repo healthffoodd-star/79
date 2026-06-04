@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>DocMind | Жёлто-салатовый + голубой • 7 форматов</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* (стили остаются без изменений) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #2c5a2a;
+            line-height: 1.5;
+            transition: background 0.3s ease, color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -2;
+            background: linear-gradient(135deg, #fff9c4 0%, #c8e6ff 40%, #b9f6ca 100%);
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(0, 0, 0, 0.02) 0px,
+                rgba(0, 0, 0, 0.02) 2px,
+                transparent 2px,
+                transparent 8px
+            );
+            pointer-events: none;
+        }
+        main { flex: 1; position: relative; z-index: 1; }
+        body.dark-mode::before {
+            background: linear-gradient(135deg, #0d2818 0%, #1a2a1f 40%, #0f1a12 100%);
+        }
+        body.dark-mode::after {
+            background-image: repeating-linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.03) 0px,
+                rgba(255, 255, 255, 0.03) 2px,
+                transparent 2px,
+                transparent 8px
+            );
+        }
+        body.dark-mode { color: #e8ffd8; }
+        body.dark-mode .header { background: rgba(20,35,25,0.92); border-bottom-color: #2e7d32; }
+        body.dark-mode .logo, body.dark-mode .logo span { color: #a8e06e; }
+        body.dark-mode .nav-tabs { background: #1a3a25cc; }
+        body.dark-mode .tab-btn { color: #d4ffb0; }
+        body.dark-mode .tab-btn.active { background: #2d5a3a; color: #ffffcc; box-shadow: 0 0 0 1px #6aaa5e, 0 8px 20px rgba(0,0,0,0.3); }
+        body.dark-mode .btn-outline-light { background: #2a4a35; border-color: #6aaa5e; color: #d4ffb0; }
+        body.dark-mode .btn-outline-light:hover { background: #3a6a45; border-color: #a0d080; }
+        body.dark-mode .form-card, body.dark-mode .preview-card, body.dark-mode .template-card, body.dark-mode .faq-item,
+        body.dark-mode .rating-section, body.dark-mode .history-panel, body.dark-mode .favorites-panel { background: #1e2a24; border-color: #3a5a45; }
+        body.dark-mode .card-header { background: #253a2e; border-bottom-color: #3a5a45; }
+        body.dark-mode .card-header h2, body.dark-mode .card-header h2 i { color: #ccffaa; }
+        body.dark-mode label { color: #d4ffc0; }
+        body.dark-mode input, body.dark-mode select, body.dark-mode textarea { background: #2a3d30; border-color: #4a6a55; color: #f0ffdf; }
+        body.dark-mode input:focus, body.dark-mode select:focus, body.dark-mode textarea:focus { border-color: #8bc34a; box-shadow: 0 0 0 3px rgba(139,195,74,0.3); background: #354d3e; }
+        body.dark-mode .checkbox-row { background: #253a2e; }
+        body.dark-mode .checkbox-row label { color: #d4ffc0; }
+        body.dark-mode .btn-primary { background: linear-gradient(115deg, #3a6a45, #5a9a4e); color: #ffffdd; }
+        body.dark-mode .btn-primary:hover { background: linear-gradient(115deg, #4a7a55, #6aaa5e); }
+        body.dark-mode .doc-preview { background: #152018; border-color: #3a5a45; }
+        body.dark-mode .methodic-content { background: #1e2a24; color: #e8ffd8; }
+        body.dark-mode .llm-note { background: #253a2e; border-left-color: #8bc34a; color: #e0ffd0; }
+        body.dark-mode .format-btn { background: #2a3d30; border-color: #4a6a55; color: #d4ffb0; }
+        body.dark-mode .format-btn:hover { background: #3a5a45; }
+        body.dark-mode .template-card:hover { background: #2a3d30; border-color: #8bc34a; }
+        body.dark-mode .use-template-btn { background: #2a3d30; border-color: #5a9a4e; color: #d4ffb0; }
+        body.dark-mode .use-template-btn:hover { background: #3a5a45; }
+        body.dark-mode .faq-question { background: #253a2e; color: #d4ffb0; }
+        body.dark-mode .faq-answer { background: #1e2a24; color: #d0ffc0; }
+        body.dark-mode .star { color: #6a7a65; }
+        body.dark-mode .star.active, body.dark-mode .star:hover { color: #f9a825; }
+        body.dark-mode .submit-rating-btn { background: #5a9a4e; color: #ffffdd; }
+        body.dark-mode .submit-rating-btn:hover { background: #7cb342; }
+        body.dark-mode .history-item, body.dark-mode .favorite-item { border-bottom-color: #3a5a45; color: #e0ffd0; }
+        body.dark-mode .history-item:hover { background: #2a3d30; }
+        body.dark-mode .delete-history-btn, body.dark-mode .delete-template-btn, body.dark-mode .favorite-history-btn { background: #5a2a2a; color: #ffcccc; }
+        body.dark-mode .delete-history-btn:hover, body.dark-mode .delete-template-btn:hover, body.dark-mode .favorite-history-btn:hover { background: #7a3a3a; color: #ffffdd; }
+        body.dark-mode .favorite-history-btn.active { background: #6a8a2a; color: #ffffaa; }
+        body.dark-mode footer { background: #152018cc; border-top-color: #2e7d32; color: #c0e0b0; }
+        body.dark-mode .hero-sub { background: #2a3d30cc; color: #e0ffc0; }
+        body.dark-mode .toast-notification { background: #1a3a25; color: #e0ffd0; border-left-color: #8bc34a; }
+        body.dark-mode .toast-notification.error { background: #5a2a1a; border-left-color: #ff8c42; }
+        body.dark-mode .toast-notification.success { background: #1a5a2a; border-left-color: #a0ff80; }
+        body.dark-mode .reviews-list { background: #2a3d30; color: #e0ffd8; }
+        body.dark-mode .review-item { border-bottom-color: #4a6a55; color: #e0ffd8; }
+        body.dark-mode .review-item .review-stars { color: #f9a825; }
+        body.dark-mode .average-rating { color: #ccffaa; }
+        body.dark-mode .modal-content { background: #1e2a24; border-color: #3a5a45; color: #e0ffd8; }
+        body.dark-mode .modal-content input, body.dark-mode .modal-content textarea, body.dark-mode .modal-content select { background: #2a3d30; border-color: #4a6a55; color: #f0ffdf; }
+        body.dark-mode .close-modal { color: #c0e0b0; }
+        body.dark-mode .topic-tag { background: #3a5a45; color: #f0ffd0; border: 1px solid #6aaa5e; }
+        body.dark-mode .topic-tag button { color: #ffccaa; }
+        body.dark-mode .history-item.favorite-history-item { background: #2a3a2a; border-left-color: #f9a825; }
+        body.dark-mode .history-empty { color: #a0c0a0; }
+        body.dark-mode .edit-hint { color: #a0c0a0; }
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 32px; }
+        .header {
+            background: rgba(255,252,210,0.85);
+            backdrop-filter: blur(14px);
+            border-bottom: 2px solid #b8e0a8;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: background 0.3s;
+        }
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; flex-wrap: wrap; gap: 20px; }
+        .logo { display: flex; align-items: center; gap: 12px; font-weight: 800; font-size: 1.6rem; color: #2e7d32; }
+        .logo i { font-size: 2rem; color: #66bb6a; }
+        .nav-tabs { display: flex; gap: 8px; background: #eef7cfcc; padding: 6px; border-radius: 60px; backdrop-filter: blur(4px); }
+        .tab-btn { background: transparent; border: none; padding: 10px 28px; border-radius: 40px; font-weight: 700; cursor: pointer; font-size: 0.95rem; color: #3e6b3a; transition: 0.2s; }
+        .tab-btn.active { background: #fffde7; color: #558b2f; box-shadow: 0 0 0 1px rgba(200,230,100,0.7), 0 8px 20px rgba(100,180,100,0.15); }
+        .btn-outline-light { background: #fffff0; border: 1.5px solid #b0d683; padding: 8px 24px; border-radius: 40px; font-weight: 700; color: #33691e; cursor: pointer; transition: 0.2s; }
+        .btn-outline-light:hover { background: #e6ffcc; border-color: #7cb342; }
+        .theme-toggle { background: #e6ffcc; border: none; padding: 8px 16px; border-radius: 40px; cursor: pointer; margin-left: 8px; font-weight: 600; transition: 0.2s; }
+        .theme-toggle:hover { background: #c8ffb0; transform: scale(0.97); }
+        .auth-btn { background: #e6ffcc; border: 1.5px solid #b0d683; padding: 8px 20px; border-radius: 40px; font-weight: 700; color: #33691e; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+        .auth-btn:hover { background: #d0f0b0; transform: scale(0.97); }
+        .user-info { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .user-avatar { background: #7cb342; color: white; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .user-avatar:hover { background: #558b2f; transform: scale(1.05); }
+        .logout-btn { background: #ff8c42; border: none; color: white; padding: 8px 16px; border-radius: 40px; font-weight: 600; cursor: pointer; }
+        .logout-btn:hover { background: #ff6b2c; }
+        .hero { padding: 50px 0 20px; text-align: center; }
+        .hero h1 { font-size: 3rem; font-weight: 800; background: linear-gradient(125deg, #2e7d32, #7cb342, #ffd966); background-clip: text; -webkit-background-clip: text; color: transparent; margin-bottom: 12px; }
+        .hero-sub { font-size: 1.2rem; font-weight: 600; background: rgba(255,250,200,0.7); display: inline-block; padding: 8px 24px; border-radius: 60px; border: 1px solid #cfe6a0; transition: 0.3s; }
+        .tab-content { display: none; animation: fadeUp 0.4s ease; }
+        .tab-content.active-tab { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .generator-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin: 30px 0 50px; }
+        @media (max-width: 900px) { .generator-grid { grid-template-columns: 1fr; } .hero h1 { font-size: 2.2rem; } .container { padding: 0 20px; } }
+        .form-card, .preview-card { background: rgba(255,255,245,0.88); backdrop-filter: blur(3px); border-radius: 38px; border: 1px solid #dcefa8; overflow: hidden; transition: background 0.3s, border 0.3s; }
+        .card-header { padding: 20px 28px; background: linear-gradient(105deg, #fff8dc, #fef9e6); border-bottom: 2px solid #e6f0bc; transition: background 0.3s; }
+        .card-header h2 { font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 10px; color: #3c6e3a; }
+        .card-header h2 i { color: #81c784; }
+        .card-body { padding: 28px; }
+        .form-group { margin-bottom: 22px; }
+        label { display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 8px; color: #386a30; transition: color 0.3s; }
+        label i { color: #81c784; width: 24px; }
+        input, select, textarea { width: 100%; padding: 12px 16px; border-radius: 28px; border: 1.5px solid #d9e6b3; background: #fffff5; transition: background 0.3s, border 0.3s, color 0.3s; }
+        input:focus, select:focus, textarea:focus { border-color: #9ccc65; box-shadow: 0 0 0 3px rgba(156,204,101,0.4); outline: none; }
+        .checkbox-row { display: flex; align-items: center; gap: 12px; margin: 15px 0; background: #fff6df; padding: 12px 20px; border-radius: 48px; transition: background 0.3s; }
+        .btn-primary { background: linear-gradient(115deg, #7cb342, #c0d86d); width: 100%; padding: 14px; border-radius: 60px; font-weight: 800; color: #253c1a; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
+        .btn-primary:hover { transform: translateY(-2px); background: linear-gradient(115deg, #9ccc65, #dced8a); }
+        .doc-preview { background: #feffe6; border-radius: 28px; padding: 20px; max-height: 560px; overflow-y: auto; border: 1px solid #e2f0bc; transition: background 0.3s, border 0.3s; }
+        .methodic-content { background: #fffffb; border-radius: 24px; padding: 24px; word-wrap: break-word; transition: background 0.3s; outline: none; min-height: 300px; }
+        .methodic-content:focus { outline: 2px solid #9ccc65; outline-offset: 2px; }
+        .edit-hint { font-size: 0.75rem; color: #888; margin-top: 8px; text-align: center; display: flex; align-items: center; gap: 6px; }
+        .llm-note { background: #fcf9e0; border-left: 5px solid #b2d866; padding: 12px 16px; border-radius: 20px; margin-top: 16px; transition: background 0.3s, border-color 0.3s; }
+        .demo-badge {
+            display: inline-block;
+            background: #fff3cd;
+            border: 1px solid #ffecb3;
+            color: #856404;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        body.dark-mode .demo-badge {
+            background: #3a3a2a;
+            border-color: #5a5a3a;
+            color: #ffd966;
+        }
+        .format-buttons { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; justify-content: center; align-items: center; }
+        .format-btn { background: #fffae6; border: 1px solid #cadd9c; padding: 10px 20px; border-radius: 60px; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .format-btn:hover { background: #eaffcf; transform: scale(0.96); }
+        .save-version-btn { background: #4caf50; border: none; padding: 10px 20px; border-radius: 60px; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; color: white; }
+        .save-version-btn:hover { background: #388e3c; transform: scale(0.97); }
+        .topic-select-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+        .topic-select-row select { flex: 1; }
+        .add-topic-btn { background: #7cb342; border: none; padding: 10px 16px; border-radius: 40px; color: white; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .add-topic-btn:hover { background: #558b2f; }
+        .selected-topics { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .topic-tag { background: #eef5dc; padding: 5px 12px; border-radius: 30px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 8px; color: #2c5a2a; font-weight: 500; }
+        .topic-tag button { background: none; border: none; cursor: pointer; color: #ff6b2c; font-weight: bold; font-size: 0.9rem; }
+        .templates-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin: 30px 0 20px; }
+        .create-template-btn { background: linear-gradient(115deg, #7cb342, #c0d86d); border: none; padding: 12px 24px; border-radius: 60px; font-weight: 700; color: #253c1a; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .create-template-btn:hover { transform: translateY(-2px); background: linear-gradient(115deg, #9ccc65, #dced8a); }
+        .templates-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 28px; margin: 20px 0 40px; }
+        .template-card { background: #fffef5; border-radius: 36px; padding: 24px; text-align: center; border: 1px solid #e2f0b0; position: relative; transition: all 0.25s; }
+        .template-card:hover { transform: translateY(-5px); border-color: #c0e084; background: #fffff0; }
+        .template-card.custom-template { border-left: 5px solid #ff8c42; }
+        .favorite-star { position: absolute; top: 15px; right: 20px; font-size: 1.3rem; cursor: pointer; color: #ddd; transition: 0.2s; z-index: 10; }
+        .favorite-star.active { color: #f9a825; }
+        .use-template-btn { background: #f9f5df; border: 1.5px solid #b4d47e; padding: 8px 18px; border-radius: 40px; font-weight: 600; margin-top: 10px; cursor: pointer; transition: 0.2s; }
+        .use-template-btn:hover { background: #dcf2be; transform: scale(0.97); }
+        .delete-template-btn { background: #ff8c42; border: none; padding: 6px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; cursor: pointer; color: white; transition: 0.2s; margin-top: 8px; margin-left: 8px; display: inline-flex; align-items: center; gap: 5px; }
+        .delete-template-btn:hover { background: #ff6b2c; transform: scale(0.95); }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); backdrop-filter: blur(4px); }
+        .modal-content { background-color: #fffef5; margin: 10% auto; padding: 30px; border-radius: 48px; width: 90%; max-width: 550px; border: 1px solid #dcefa8; box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: modalSlide 0.3s ease; }
+        .profile-modal { max-width: 500px; }
+        .auth-modal { max-width: 420px; }
+        .auth-switch { text-align: center; margin-top: 16px; font-size: 0.85rem; }
+        .auth-switch a { color: #7cb342; cursor: pointer; text-decoration: none; font-weight: 600; }
+        @keyframes modalSlide { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-content h3 { margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .modal-content input, .modal-content textarea, .modal-content select { width: 100%; margin-bottom: 15px; }
+        .modal-buttons { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; }
+        .modal-buttons button { padding: 10px 24px; border-radius: 40px; font-weight: 600; cursor: pointer; border: none; }
+        .modal-buttons .save-modal { background: #7cb342; color: white; }
+        .modal-buttons .cancel-modal { background: #ddd; color: #333; }
+        .modal-buttons .danger-modal { background: #ff8c42; color: white; }
+        .modal-buttons .danger-modal:hover { background: #ff6b2c; }
+        .close-modal { float: right; font-size: 28px; font-weight: bold; cursor: pointer; color: #aaa; }
+        .history-item-actions { display: flex; gap: 8px; align-items: center; }
+        .favorite-history-btn { background: #e0e0e0; border: none; padding: 6px 10px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; color: #555; }
+        .favorite-history-btn.active { background: #f9a825; color: white; }
+        .history-item { padding: 12px 15px; border-bottom: 1px solid #d4e6a0; transition: 0.2s; border-radius: 20px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; cursor: pointer; }
+        .history-item.favorite-history-item { background: #fff8e0; border-left: 4px solid #f9a825; }
+        .history-item:hover { background: #eaffcf; border-radius: 20px; }
+        .history-item-content { flex: 1; cursor: pointer; }
+        .delete-history-btn { background: #ff8c42; border: none; padding: 6px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; cursor: pointer; color: white; transition: 0.2s; display: inline-flex; align-items: center; gap: 5px; }
+        .delete-history-btn:hover { background: #ff6b2c; transform: scale(0.95); }
+        .history-empty { text-align: center; padding: 40px; color: #888; }
+        .clear-history-btn { background: #ff8c42; border: none; padding: 8px 20px; border-radius: 40px; font-weight: 600; cursor: pointer; margin-top: 15px; color: white; transition: 0.2s; }
+        .clear-history-btn:hover { background: #ff6b2c; transform: scale(0.97); }
+        .favorites-panel { background: rgba(255,255,240,0.8); border-radius: 28px; padding: 15px 20px; margin-top: 20px; font-size: 0.85rem; max-height: 180px; overflow-y: auto; transition: background 0.3s; }
+        .favorite-item { padding: 6px 8px; border-bottom: 1px solid #d4e6a0; cursor: pointer; transition: 0.2s; }
+        .favorite-item:hover { background: #eaffcf; border-radius: 20px; }
+        .faq-section { max-width: 900px; margin: 40px auto; }
+        .faq-item { background: #fffff0; border-radius: 32px; margin-bottom: 20px; border: 1px solid #daeca8; overflow: hidden; transition: background 0.3s, border 0.3s; }
+        .faq-question { padding: 20px 28px; font-weight: 800; display: flex; justify-content: space-between; cursor: pointer; background: #fffbe6; color: #558b2f; transition: background 0.3s, color 0.3s; }
+        .faq-answer { padding: 0 28px; max-height: 0; overflow: hidden; transition: 0.3s ease; background: #fffff9; }
+        .faq-item.open .faq-answer { padding: 0 28px 24px 28px; max-height: 300px; }
+        .rating-section { background: rgba(255,255,245,0.9); border-radius: 38px; padding: 24px 28px; margin: 30px 0 20px; border: 1px solid #cfe6a0; text-align: center; transition: background 0.3s; }
+        .stars-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 12px; }
+        .star { font-size: 2rem; cursor: pointer; color: #ddd; transition: 0.2s; }
+        .star.active, .star:hover { color: #f9a825; transform: scale(1.1); }
+        .submit-rating-btn { background: #7cb342; border: none; padding: 10px 24px; border-radius: 40px; font-weight: 600; color: white; cursor: pointer; margin-top: 12px; transition: 0.2s; }
+        .submit-rating-btn:hover { background: #558b2f; transform: scale(0.97); }
+        .average-rating { margin-top: 16px; font-size: 0.9rem; font-weight: 600; color: #558b2f; transition: color 0.3s; }
+        .reviews-list { margin-top: 16px; max-height: 150px; overflow-y: auto; font-size: 0.85rem; text-align: left; background: #fffff0; border-radius: 28px; padding: 12px 20px; transition: background 0.3s, color 0.3s; color: #2c5a2a; }
+        .review-item { padding: 8px 0; border-bottom: 1px solid #e2f0bc; transition: border-color 0.3s; }
+        .review-stars { color: #f9a825; }
+        .history-panel { background: rgba(255,255,240,0.8); border-radius: 28px; padding: 20px; margin-top: 20px; font-size: 0.9rem; transition: background 0.3s; min-height: 400px; }
+        .history-list-container { max-height: 500px; overflow-y: auto; margin-top: 15px; }
+        .toast-notification { position: fixed; top: 90px; left: 50%; transform: translateX(-50%); background: #2c5a2a; color: #fff9c4; padding: 12px 28px; border-radius: 60px; font-weight: 600; z-index: 9999; display: flex; align-items: center; gap: 12px; animation: slideDown 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: background 0.3s; }
+        .toast-notification.error { background: #a52a1a; }
+        .toast-notification.success { background: #2e7d32; }
+        @keyframes slideDown { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+        footer { background: #fffde0cc; backdrop-filter: blur(6px); border-top: 2px solid #cee6a0; padding: 36px 0; text-align: center; transition: background 0.3s, border-color 0.3s; margin-top: 60px; position: relative; z-index: 1; }
+        .email-hint { font-size: 0.7rem; color: #888; margin-top: -10px; margin-bottom: 12px; display: flex; align-items: center; gap: 5px; }
+        body.dark-mode .email-hint { color: #a0c0a0; }
+        .format-buttons-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 15px; justify-content: center; align-items: center; }
+        .edited-badge { background: #ff9800; color: white; font-size: 0.7rem; padding: 2px 8px; border-radius: 20px; margin-left: 8px; }
+        .profile-info { background: rgba(0,0,0,0.03); border-radius: 20px; padding: 15px; margin-bottom: 20px; }
+        body.dark-mode .profile-info { background: rgba(255,255,255,0.05); }
+        .profile-field { margin-bottom: 15px; }
+        .profile-field label { font-weight: 600; margin-bottom: 5px; display: block; }
+        .profile-field .field-value { background: #f5f5f5; padding: 10px 15px; border-radius: 28px; font-size: 0.95rem; }
+        body.dark-mode .profile-field .field-value { background: #2a3d30; }
+        .edit-profile-btn { background: #7cb342; border: none; padding: 10px 20px; border-radius: 40px; color: white; font-weight: 600; cursor: pointer; width: 100%; margin-top: 10px; transition: 0.2s; }
+        .edit-profile-btn:hover { background: #558b2f; transform: scale(0.98); }
+        .change-email-section { margin-top: 20px; padding-top: 20px; border-top: 1px solid #ddd; }
+        body.dark-mode .change-email-section { border-top-color: #3a5a45; }
+        .warning-text { color: #ff8c42; font-size: 0.75rem; margin-top: 5px; }
+    </style>
+</head>
+<body>
+<header class="header">
+    <div class="container">
+        <div class="nav-bar">
+            <div class="logo"><i class="fas fa-leaf"></i><span>DocMind<span style="font-weight:500"> | Методички</span></span></div>
+            <div class="nav-tabs">
+                <button class="tab-btn active" data-tab="constructor"><i class="fas fa-magic"></i> Конструктор</button>
+                <button class="tab-btn" data-tab="history"><i class="fas fa-history"></i> История</button>
+                <button class="tab-btn" data-tab="templates"><i class="fas fa-file-word"></i> Шаблоны</button>
+                <button class="tab-btn" data-tab="faq"><i class="fas fa-question-circle"></i> FAQ</button>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <div id="authContainer">
+                    <button class="auth-btn" id="openAuthBtn"><i class="fas fa-sign-in-alt"></i> Вход / Регистрация</button>
+                </div>
+                <div id="userContainer" style="display: none; align-items: center; gap: 12px;">
+                    <div class="user-info" id="userInfoBtn">
+                        <div class="user-avatar" id="userAvatar"><i class="fas fa-user"></i></div>
+                        <span id="userDisplayName" style="font-weight: 600;"></span>
+                    </div>
+                    <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Выйти</button>
+                </div>
+                <button class="theme-toggle" id="themeToggleBtn"><i class="fas fa-moon"></i> Тема</button>
+            </div>
+        </div>
+    </div>
+</header>
+<main class="container">
+    <div class="hero">
+        <h1>Автоматическое создание методичек</h1>
+        <div class="hero-sub"><i class="fas fa-file-export"></i> 7 форматов экспорта: DOCX, PDF, Markdown, HTML, EPUB, JSON, TXT</div>
+    </div>
+    <div id="constructorTab" class="tab-content active-tab">
+        <div class="generator-grid">
+            <div class="form-card">
+                <div class="card-header"><h2><i class="fas fa-pen-ruler"></i> Заполните данные</h2></div>
+                <div class="card-body">
+                    <div class="form-group"><label><i class="fas fa-book"></i> Дисциплина / Направление</label><select id="disciplineSelect"><option value="0">📚 Выберите дисциплину...</option></select></div>
+                    <div class="form-group"><label><i class="fas fa-users"></i> Целевая аудитория</label><select id="audienceSelect"><option value="0">👥 Выберите аудиторию...</option></select></div>
+                    <div class="form-group">
+                        <label><i class="fas fa-list-ul"></i> Ключевые темы</label>
+                        <div class="topic-select-row"><select id="topicSelect"><option value="0">📌 Выберите тему...</option></select><button type="button" class="add-topic-btn" id="addTopicBtn"><i class="fas fa-plus"></i> Добавить</button></div>
+                        <div id="selectedTopics" class="selected-topics"></div>
+                        <input type="hidden" id="topics" value="">
+                    </div>
+                    <div class="form-group">
+                        <label><i class="fas fa-file-alt"></i> Стиль шаблона</label>
+                        <select id="templateSelect">
+                            <option value="academic">🎓 Академический (учебный стиль)</option>
+                            <option value="scientific">🔬 Научный (строгий, с терминами)</option>
+                            <option value="daily">🏠 Бытовой (простой, понятный язык)</option>
+                            <option value="business">💼 Бизнес (деловой, практический)</option>
+                        </select>
+                    </div>
+                    <div class="checkbox-row"><input type="checkbox" id="llmEnrich" checked><label><i class="fas fa-chart-line"></i> Дополнительные кейсы и метрики</label></div>
+                    <button class="btn-primary" id="generateBtn"><i class="fas fa-sync-alt"></i> Создать методичку</button>
+                </div>
+            </div>
+            <div class="preview-card">
+                <div class="card-header"><h2><i class="fas fa-eye"></i> Предпросмотр & экспорт</h2></div>
+                <div class="card-body">
+                    <div class="demo-badge">
+                        <i class="fas fa-info-circle"></i> ⚠️ Демонстрационный пример — текст носит ознакомительный характер
+                    </div>
+                    <div id="docPreviewContainer" class="doc-preview">
+                        <div class="methodic-content" id="methodicPreview" contenteditable="true"><p>Выберите дисциплину, темы и стиль шаблона</p></div>
+                        <div class="edit-hint"><i class="fas fa-pencil-alt"></i> Текст можно редактировать прямо здесь — изменения сохранятся в историю!</div>
+                    </div>
+                    <div class="format-buttons">
+                        <button class="save-version-btn" id="saveToHistoryBtn"><i class="fas fa-save"></i> 💾 Сохранить текущую версию в историю</button>
+                    </div>
+                    <div class="format-buttons-row">
+                        <button class="format-btn" id="exportDocxBtn"><i class="fas fa-file-word"></i> DOCX</button>
+                        <button class="format-btn" id="exportPDFBtn"><i class="fas fa-file-pdf"></i> PDF</button>
+                        <button class="format-btn" id="exportMarkdownBtn"><i class="fab fa-markdown"></i> Markdown</button>
+                        <button class="format-btn" id="exportHTMLBtn"><i class="fas fa-code"></i> HTML</button>
+                        <button class="format-btn" id="exportEPUBBtn"><i class="fas fa-book"></i> EPUB</button>
+                        <button class="format-btn" id="exportJSONBtn"><i class="fas fa-brackets-curly"></i> JSON</button>
+                        <button class="format-btn" id="exportTXTBtn"><i class="fas fa-file-alt"></i> TXT</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="favorites-panel"><strong><i class="fas fa-heart"></i> Избранные шаблоны:</strong> <div id="favoritesList">(нет избранных)</div></div>
+    </div>
+    <div id="historyTab" class="tab-content"><div class="history-panel"><div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;"><h3><i class="fas fa-history"></i> История генераций <span style="font-size:0.8rem;">⭐ избранные в начале</span></h3><button class="clear-history-btn" id="clearHistoryBtn"><i class="fas fa-trash-alt"></i> Очистить всё</button></div><div class="history-list-container" id="historyListContainer"></div></div></div>
+    <div id="templatesTab" class="tab-content"><div class="templates-header"><h3><i class="fas fa-file-alt"></i> Мои шаблоны</h3><button class="create-template-btn" id="createTemplateBtn"><i class="fas fa-plus"></i> Создать шаблон</button></div><div class="templates-grid" id="templatesGrid"></div></div>
+    <div id="faqTab" class="tab-content"><div class="faq-section"><div class="faq-item"><div class="faq-question">Какие форматы экспорта? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">DOCX, PDF, Markdown, HTML, EPUB, JSON, TXT</div></div><div class="faq-item"><div class="faq-question">Какие стили шаблонов доступны? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Академический (учебный), Научный (строгий с терминами), Бытовой (простой язык), Бизнес (деловой, практический)</div></div><div class="faq-item"><div class="faq-question">Как сохранить отредактированную методичку? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Вы можете редактировать текст прямо в предпросмотре, а затем нажать кнопку «Сохранить текущую версию в историю» — ваши правки сохранятся и будут доступны в истории.</div></div><div class="faq-item"><div class="faq-question">Как создать свой шаблон? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Нажмите «Создать шаблон» в разделе «Шаблоны», заполните поля и сохраните.</div></div><div class="faq-item"><div class="faq-question">Как добавить запись из истории в избранное? <i class="fas fa-chevron-down"></i></div><div class="faq-answer">Нажмите на звёздочку рядом с записью в истории.</div></div><div class="rating-section"><div><i class="fas fa-star" style="color:#f9a825;"></i> <strong>Оцените работу сервиса</strong></div><div class="stars-container" id="starsContainer"><i class="fas fa-star star" data-value="1"></i><i class="fas fa-star star" data-value="2"></i><i class="fas fa-star star" data-value="3"></i><i class="fas fa-star star" data-value="4"></i><i class="fas fa-star star" data-value="5"></i></div><textarea id="reviewText" rows="2" placeholder="Ваш отзыв (необязательно)" style="width:100%; max-width:500px; border-radius:20px; padding:10px; margin-top:10px;"></textarea><button class="submit-rating-btn" id="submitRatingBtn">Отправить оценку</button><div class="average-rating" id="averageRatingDisplay">⭐ Средняя оценка: пока нет оценок</div><div class="reviews-list" id="reviewsList"><div>Отзывы появятся здесь</div></div></div></div></div>
+</main>
+
+<!-- Модальное окно профиля -->
+<div id="profileModal" class="modal">
+    <div class="modal-content profile-modal">
+        <span class="close-modal" id="closeProfileModal">&times;</span>
+        <h3><i class="fas fa-user-circle"></i> Личный кабинет</h3>
+        <div id="profileContent">
+            <div class="profile-info">
+                <div class="profile-field">
+                    <label><i class="fas fa-user"></i> Имя пользователя</label>
+                    <div class="field-value" id="profileNameDisplay"></div>
+                </div>
+                <div class="profile-field">
+                    <label><i class="fas fa-envelope"></i> Email</label>
+                    <div class="field-value" id="profileEmailDisplay"></div>
+                </div>
+                <div class="profile-field">
+                    <label><i class="fas fa-calendar-alt"></i> Дата регистрации</label>
+                    <div class="field-value" id="profileDateDisplay"></div>
+                </div>
+                <button class="edit-profile-btn" id="editProfileBtn"><i class="fas fa-pencil-alt"></i> Редактировать профиль</button>
+            </div>
+            <div id="editProfileForm" style="display: none;">
+                <div class="profile-field">
+                    <label><i class="fas fa-user"></i> Имя пользователя</label>
+                    <input type="text" id="editUserName" placeholder="Введите ваше имя">
+                </div>
+                <div class="profile-field">
+                    <label><i class="fas fa-key"></i> Текущий пароль (для смены email)</label>
+                    <input type="password" id="editPassword" placeholder="Введите текущий пароль">
+                </div>
+                <div class="change-email-section">
+                    <h4><i class="fas fa-envelope"></i> Смена email</h4>
+                    <div class="profile-field">
+                        <label>Новый email</label>
+                        <input type="email" id="newEmail" placeholder="Новый email">
+                        <div class="warning-text"><i class="fas fa-exclamation-triangle"></i> Внимание: после смены email войти можно будет только с новым адресом</div>
+                    </div>
+                    <div class="profile-field">
+                        <label>Подтверждение пароля</label>
+                        <input type="password" id="confirmPasswordForEmail" placeholder="Подтвердите пароль">
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button class="cancel-modal" id="cancelEditBtn">Отмена</button>
+                    <button class="save-modal" id="saveProfileBtn">Сохранить изменения</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="authModal" class="modal"><div class="modal-content auth-modal"><span class="close-modal" id="closeAuthModal">&times;</span><h3 id="authModalTitle"><i class="fas fa-envelope"></i> Вход / Регистрация</h3><input type="email" id="authEmail" placeholder="Email (например, user@gmail.com)" style="margin-bottom: 8px;"><div class="email-hint"><i class="fas fa-info-circle"></i> Используйте реальный email с @ и доменом</div><input type="password" id="authPassword" placeholder="Пароль (мин. 4 символа)"><div class="auth-switch">Нет аккаунта? <a id="switchToRegister">Зарегистрироваться</a></div><div class="modal-buttons" style="margin-top: 20px;"><button id="authSubmitBtn" class="save-modal">Войти</button><button class="cancel-modal" id="cancelAuthBtn">Отмена</button></div></div></div>
+
+<div id="templateModal" class="modal"><div class="modal-content"><span class="close-modal">&times;</span><h3><i class="fas fa-plus-circle"></i> Создать свой шаблон</h3><input type="text" id="templateName" placeholder="Название шаблона"><select id="templateDisciplineSelect"><option value="0">Выберите дисциплину...</option></select><select id="templateAudienceSelect"><option value="0">Выберите аудиторию...</option></select><div class="topic-select-row"><select id="templateTopicSelect"><option value="0">Выберите тему...</option></select><button type="button" class="add-topic-btn" id="addTemplateTopicBtn"><i class="fas fa-plus"></i> Добавить</button></div><div id="templateSelectedTopics" class="selected-topics"></div><input type="hidden" id="templateTopicsValue" value=""><div class="modal-buttons"><button class="cancel-modal">Отмена</button><button class="save-modal">Сохранить шаблон</button></div></div></div>
+
+<footer><div class="container"><p><strong>DocMind — 7 форматов экспорта:</strong> DOCX, PDF, Markdown, HTML, EPUB, JSON, TXT</p><p>© 2026 • DocMind</p></div></footer>
+
+<script>
+    // ==================== ПРОВЕРКА EMAIL ====================
+    function isValidEmail(email) {
+        if (!email || typeof email !== 'string') return false;
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    }
+
+    // ==================== АВТОРИЗАЦИЯ ====================
+    let currentUser = null;
+    const USERS_KEY = 'docmind_users';
+    
+    function loadUsers() { return JSON.parse(localStorage.getItem(USERS_KEY) || '[]'); }
+    function saveUsers(users) { localStorage.setItem(USERS_KEY, JSON.stringify(users)); }
+    
+    function registerUser(email, password, displayName = null) {
+        if (!email || !password || password.length < 4) return { success: false, message: 'Email и пароль (мин. 4 символа)' };
+        if (!isValidEmail(email)) return { success: false, message: 'Введите корректный email' };
+        const users = loadUsers();
+        if (users.find(u => u.email === email)) return { success: false, message: 'Пользователь уже существует' };
+        const userName = displayName || email.split('@')[0];
+        users.push({ email, password, id: Date.now().toString(), displayName: userName, createdAt: new Date().toISOString() });
+        saveUsers(users);
+        return { success: true };
+    }
+    
+    function loginUser(email, password) {
+        if (!isValidEmail(email)) return { success: false, message: 'Введите корректный email' };
+        const users = loadUsers();
+        const user = users.find(u => u.email === email && u.password === password);
+        if (user) return { success: true, user };
+        return { success: false, message: 'Неверный email или пароль' };
+    }
+    
+    function updateUserEmail(oldEmail, newEmail, password) {
+        const users = loadUsers();
+        const userIndex = users.findIndex(u => u.email === oldEmail);
+        if (userIndex === -1) return { success: false, message: 'Пользователь не найден' };
+        if (users[userIndex].password !== password) return { success: false, message: 'Неверный пароль' };
+        if (users.find(u => u.email === newEmail)) return { success: false, message: 'Email уже используется' };
+        if (!isValidEmail(newEmail)) return { success: false, message: 'Введите корректный email' };
+        
+        users[userIndex].email = newEmail;
+        saveUsers(users);
+        return { success: true, user: users[userIndex] };
+    }
+    
+    function updateUserDisplayName(email, newName, password) {
+        const users = loadUsers();
+        const userIndex = users.findIndex(u => u.email === email);
+        if (userIndex === -1) return { success: false, message: 'Пользователь не найден' };
+        if (users[userIndex].password !== password) return { success: false, message: 'Неверный пароль' };
+        
+        users[userIndex].displayName = newName || email.split('@')[0];
+        saveUsers(users);
+        return { success: true, user: users[userIndex] };
+    }
+    
+    function getPrefix() { return currentUser ? `docmind_user_${currentUser.email}_` : 'docmind_guest_'; }
+    
+    let favorites = [], customTemplates = [], generationHistory = [], historyFavorites = [], ratings = [];
+    
+    function loadUserData() {
+        const prefix = getPrefix();
+        favorites = JSON.parse(localStorage.getItem(prefix + 'favorites') || '[]');
+        customTemplates = JSON.parse(localStorage.getItem(prefix + 'custom_templates') || '[]');
+        generationHistory = JSON.parse(localStorage.getItem(prefix + 'history') || '[]');
+        historyFavorites = JSON.parse(localStorage.getItem(prefix + 'history_favorites') || '[]');
+        ratings = JSON.parse(localStorage.getItem(prefix + 'ratings') || '[]');
+    }
+    
+    function saveUserData() {
+        if (!currentUser) return;
+        const prefix = getPrefix();
+        localStorage.setItem(prefix + 'favorites', JSON.stringify(favorites));
+        localStorage.setItem(prefix + 'custom_templates', JSON.stringify(customTemplates));
+        localStorage.setItem(prefix + 'history', JSON.stringify(generationHistory));
+        localStorage.setItem(prefix + 'history_favorites', JSON.stringify(historyFavorites));
+        localStorage.setItem(prefix + 'ratings', JSON.stringify(ratings));
+    }
+    
+    function updateAuthUI() {
+        const isLoggedIn = !!currentUser;
+        document.getElementById('authContainer').style.display = isLoggedIn ? 'none' : 'block';
+        document.getElementById('userContainer').style.display = isLoggedIn ? 'flex' : 'none';
+        if (isLoggedIn) {
+            const displayName = currentUser.displayName || currentUser.email.split('@')[0];
+            document.getElementById('userDisplayName').innerText = displayName;
+            const avatarLetter = displayName.charAt(0).toUpperCase();
+            document.getElementById('userAvatar').innerHTML = avatarLetter;
+        }
+    }
+    
+    function openProfileModal() {
+        if (!currentUser) return;
+        document.getElementById('profileNameDisplay').innerText = currentUser.displayName || currentUser.email.split('@')[0];
+        document.getElementById('profileEmailDisplay').innerText = currentUser.email;
+        const createdAt = currentUser.createdAt ? new Date(currentUser.createdAt).toLocaleDateString() : 'неизвестно';
+        document.getElementById('profileDateDisplay').innerText = createdAt;
+        document.getElementById('editUserName').value = currentUser.displayName || '';
+        document.getElementById('editPassword').value = '';
+        document.getElementById('newEmail').value = '';
+        document.getElementById('confirmPasswordForEmail').value = '';
+        document.getElementById('profileContent').querySelector('.profile-info').style.display = 'block';
+        document.getElementById('editProfileForm').style.display = 'none';
+        document.getElementById('profileModal').style.display = 'block';
+    }
+    
+    async function saveProfileChanges() {
+        const newName = document.getElementById('editUserName').value.trim();
+        const password = document.getElementById('editPassword').value;
+        const newEmail = document.getElementById('newEmail').value.trim();
+        const confirmPassword = document.getElementById('confirmPasswordForEmail').value;
+        
+        if (newName && newName !== (currentUser.displayName || currentUser.email.split('@')[0])) {
+            if (!password) { showUserMessage('Введите пароль для смены имени', 'error'); return; }
+            const nameResult = updateUserDisplayName(currentUser.email, newName, password);
+            if (!nameResult.success) { showUserMessage(nameResult.message, 'error'); return; }
+            currentUser = nameResult.user;
+            localStorage.setItem('docmind_current_user', JSON.stringify({ email: currentUser.email }));
+            showUserMessage('Имя успешно обновлено!', 'success');
+        }
+        
+        if (newEmail && newEmail !== currentUser.email) {
+            if (!confirmPassword) { showUserMessage('Введите пароль для смены email', 'error'); return; }
+            const emailResult = updateUserEmail(currentUser.email, newEmail, confirmPassword);
+            if (!emailResult.success) { showUserMessage(emailResult.message, 'error'); return; }
+            
+            const oldPrefix = `docmind_user_${currentUser.email}_`;
+            const newPrefix = `docmind_user_${newEmail}_`;
+            const favoritesData = localStorage.getItem(oldPrefix + 'favorites');
+            const templatesData = localStorage.getItem(oldPrefix + 'custom_templates');
+            const historyData = localStorage.getItem(oldPrefix + 'history');
+            const historyFavData = localStorage.getItem(oldPrefix + 'history_favorites');
+            const ratingsData = localStorage.getItem(oldPrefix + 'ratings');
+            
+            if (favoritesData) localStorage.setItem(newPrefix + 'favorites', favoritesData);
+            if (templatesData) localStorage.setItem(newPrefix + 'custom_templates', templatesData);
+            if (historyData) localStorage.setItem(newPrefix + 'history', historyData);
+            if (historyFavData) localStorage.setItem(newPrefix + 'history_favorites', historyFavData);
+            if (ratingsData) localStorage.setItem(newPrefix + 'ratings', ratingsData);
+            
+            localStorage.removeItem(oldPrefix + 'favorites');
+            localStorage.removeItem(oldPrefix + 'custom_templates');
+            localStorage.removeItem(oldPrefix + 'history');
+            localStorage.removeItem(oldPrefix + 'history_favorites');
+            localStorage.removeItem(oldPrefix + 'ratings');
+            
+            currentUser = emailResult.user;
+            localStorage.setItem('docmind_current_user', JSON.stringify({ email: currentUser.email }));
+            showUserMessage('Email успешно изменен!', 'success');
+        }
+        
+        updateAuthUI();
+        loadUserData();
+        refreshAll();
+        document.getElementById('profileModal').style.display = 'none';
+        showUserMessage('Профиль обновлен!', 'success');
+    }
+    
+    const authModal = document.getElementById('authModal');
+    const openAuthBtn = document.getElementById('openAuthBtn');
+    const closeAuthModal = document.getElementById('closeAuthModal');
+    const cancelAuthBtn = document.getElementById('cancelAuthBtn');
+    const authSubmitBtn = document.getElementById('authSubmitBtn');
+    const switchLink = document.getElementById('switchToRegister');
+    let isLoginMode = true;
+    
+    function openModal(loginMode = true) {
+        isLoginMode = loginMode;
+        document.getElementById('authModalTitle').innerHTML = loginMode ? '<i class="fas fa-sign-in-alt"></i> Вход' : '<i class="fas fa-user-plus"></i> Регистрация';
+        authSubmitBtn.innerText = loginMode ? 'Войти' : 'Зарегистрироваться';
+        switchLink.innerText = loginMode ? 'Зарегистрироваться' : 'Уже есть аккаунт? Войти';
+        document.getElementById('authEmail').value = '';
+        document.getElementById('authPassword').value = '';
+        authModal.style.display = 'block';
+    }
+    
+    authSubmitBtn.onclick = () => {
+        const email = document.getElementById('authEmail').value.trim();
+        const password = document.getElementById('authPassword').value;
+        if (!email || !password) { showUserMessage('Заполните все поля', 'error'); return; }
+        if (isLoginMode) {
+            const res = loginUser(email, password);
+            if (res.success) {
+                currentUser = res.user;
+                localStorage.setItem('docmind_current_user', JSON.stringify({ email: currentUser.email }));
+                loadUserData();
+                updateAuthUI();
+                refreshAll();
+                authModal.style.display = 'none';
+                showUserMessage(`Добро пожаловать, ${currentUser.displayName || email.split('@')[0]}!`, 'success');
+            } else { showUserMessage(res.message, 'error'); }
+        } else {
+            const res = registerUser(email, password);
+            if (res.success) {
+                showUserMessage('Регистрация успешна! Теперь войдите.', 'success');
+                openModal(true);
+            } else { showUserMessage(res.message, 'error'); }
+        }
+    };
+    
+    switchLink.onclick = () => { openModal(!isLoginMode); };
+    openAuthBtn.onclick = () => openModal(true);
+    closeAuthModal.onclick = () => authModal.style.display = 'none';
+    cancelAuthBtn.onclick = () => authModal.style.display = 'none';
+    document.getElementById('logoutBtn').onclick = () => {
+        currentUser = null;
+        localStorage.removeItem('docmind_current_user');
+        loadUserData();
+        updateAuthUI();
+        refreshAll();
+        showUserMessage('Вы вышли из системы', 'info');
+    };
+    
+    document.getElementById('userInfoBtn').onclick = () => openProfileModal();
+    document.getElementById('closeProfileModal').onclick = () => document.getElementById('profileModal').style.display = 'none';
+    document.getElementById('editProfileBtn').onclick = () => {
+        document.getElementById('profileContent').querySelector('.profile-info').style.display = 'none';
+        document.getElementById('editProfileForm').style.display = 'block';
+    };
+    document.getElementById('cancelEditBtn').onclick = () => {
+        document.getElementById('profileContent').querySelector('.profile-info').style.display = 'block';
+        document.getElementById('editProfileForm').style.display = 'none';
+    };
+    document.getElementById('saveProfileBtn').onclick = () => saveProfileChanges();
+    
+    const savedUser = localStorage.getItem('docmind_current_user');
+    if (savedUser) {
+        try {
+            const u = JSON.parse(savedUser);
+            const users = loadUsers();
+            const found = users.find(us => us.email === u.email);
+            if (found) currentUser = found;
+        } catch(e) {}
+    }
+    loadUserData();
+    updateAuthUI();
+    
+    // ==================== ОСНОВНОЙ ФУНКЦИОНАЛ ====================
+    const disciplinesDB = {
+        "it": { name: "💻 Информационные технологии", audience: ["Студенты IT", "Начинающие разработчики", "Системные аналитики"] },
+        "design": { name: "🎨 Дизайн и UX/UI", audience: ["Дизайнеры интерфейсов", "Продуктовые дизайнеры", "Студенты дизайна"] },
+        "business": { name: "📊 Бизнес и управление", audience: ["Менеджеры проектов", "Руководители", "Предприниматели"] },
+        "marketing": { name: "📢 Маркетинг и PR", audience: ["Маркетологи", "SMM-специалисты", "PR-менеджеры"] },
+        "psychology": { name: "🧠 Психология", audience: ["Психологи", "HR-специалисты", "Коучи"] },
+        "law": { name: "⚖️ Юриспруденция", audience: ["Юристы", "Адвокаты", "Студенты-юристы"] },
+        "finance": { name: "💰 Финансы и экономика", audience: ["Финансовые аналитики", "Экономисты", "Бухгалтеры"] },
+        "education": { name: "📚 Педагогика", audience: ["Преподаватели", "Методисты", "Педагоги"] },
+        "data": { name: "📊 Data Science", audience: ["Аналитики данных", "Data Scientist", "BI-специалисты"] },
+        "soft": { name: "🤝 Soft Skills", audience: ["Сотрудники", "Руководители", "HR-специалисты"] }
+    };
+    const topicsDB = {
+        "it": ["Python", "Веб-разработка", "Базы данных SQL", "DevOps", "Кибербезопасность", "Облачные технологии", "ИИ"],
+        "design": ["Figma", "UI/UX дизайн", "Дизайн-системы", "Юзабилити", "Веб-дизайн", "Графический дизайн"],
+        "business": ["Agile/Scrum", "Управление проектами", "Бережливое производство", "Стратегический менеджмент", "KPI/OKR"],
+        "marketing": ["SMM", "SEO", "Контент-маркетинг", "Email маркетинг", "Таргет", "Аналитика", "Брендинг"],
+        "psychology": ["Психология личности", "Социальная психология", "Когнитивная психология", "Конфликтология"],
+        "law": ["Гражданское право", "Трудовое право", "Налоговое право", "Корпоративное право"],
+        "finance": ["Финансовый анализ", "Инвестиции", "Бухучёт", "Налогообложение", "Управление рисками"],
+        "education": ["Методики обучения", "Цифровые технологии", "Оценка знаний", "Педагогический дизайн"],
+        "data": ["Python для анализа", "SQL", "Машинное обучение", "Визуализация", "Big Data", "Power BI"],
+        "soft": ["Коммуникации", "Тайм-менеджмент", "Работа в команде", "Критическое мышление", "Эмоциональный интеллект"]
+    };
+    
+    let currentTopicsList = [];
+    let templateTopicsList = [];
+    
+    function generateMethodicContent(discipline, audience, topicsRaw, templateStyle, isEnrich) {
+        let topicsList = topicsRaw.split(',').map(t=>t.trim()).filter(t=>t);
+        let topicsStr = topicsList.join(', ');
+        
+        const styleConfig = {
+            academic: { name: "Академический", title: "Методическое пособие", introPrefix: "Настоящее методическое пособие", extra: "Разработано в соответствии с требованиями ФГОС.", sections: { intro: "Введение", theory: "Теоретический раздел", practice: "Практические задания", control: "Контрольные вопросы", literature: "Список литературы" } },
+            scientific: { name: "Научный", title: "Научно-методическая разработка", introPrefix: "В рамках научного исследования представлена", extra: "Актуальность темы обусловлена необходимостью систематизации знаний.", sections: { intro: "Введение (актуальность)", theory: "Теоретико-методологическая основа", practice: "Экспериментальная часть", control: "Критерии оценки", literature: "Библиографический список" } },
+            daily: { name: "Бытовой", title: "Практическое руководство", introPrefix: "Это простое руководство", extra: "Объясняем сложные вещи простыми словами.", sections: { intro: "Введение — зачем это нужно", theory: "Что важно знать", practice: "Как делать на практике", control: "Проверьте себя", literature: "Полезные материалы" } },
+            business: { name: "Бизнес", title: "Корпоративный методический материал", introPrefix: "Данный документ", extra: "Структурирован в соответствии с бизнес-процессами.", sections: { intro: "Executive Summary", theory: "Ключевые концепции", practice: "Инструменты внедрения", control: "KPI и показатели", literature: "Рекомендуемые ресурсы" } }
+        };
+        
+        const config = styleConfig[templateStyle] || styleConfig.academic;
+        
+        let introText = `${config.introPrefix} «${discipline}» предназначено для ${audience}. ${config.extra} Цель — сформировать компетенции в области ${topicsStr || 'профильных дисциплин'}.`;
+        let theoryText = `<strong>Ключевые понятия:</strong> ${topicsStr}.<br><br>В основе дисциплины лежат принципы системности и практико-ориентированности.`;
+        let practicalText = `<strong>Практические задания (${config.name} стиль):</strong><br>• Задание 1: Анализ кейса по теме "${topicsList[0] || 'основной теме'}"<br>• Задание 2: Разработка проекта<br>• Задание 3: Групповая дискуссия`;
+        let controlText = `<strong>Контрольные вопросы:</strong><br>1. Каковы цели изучения дисциплины?<br>2. Опишите ключевые принципы.<br>3. Какие инструменты используются?<br><br><strong>Критерии оценки:</strong> Отлично (90-100%), Хорошо (75-89%).`;
+        let bibliographyText = `<strong>${config.sections.literature}:</strong><br>• Основные учебные пособия<br>• Научные статьи<br>• Онлайн-курсы`;
+        
+        let enrichBlock = isEnrich ? `<div class="llm-note"><i class="fas fa-chart-simple"></i> <strong>Дополнительные материалы:</strong><br><br>📊 <strong>Кейс:</strong> Успешный пример внедрения подходов.<br><br>📈 <strong>Метрики:</strong> Эффективность обучения повышается на 30-40%.</div>` : `<div class="llm-note"><i class="fas fa-ban"></i> Дополнительные материалы отключены.</div>`;
+        
+        let headerHtml = `<div style="margin-bottom:15px;">
+            <h1 style="color:#2e7d32;">📘 ${discipline}</h1>
+            <p><strong>👥 Целевая аудитория:</strong> ${audience}</p>
+            <p><strong>📌 Ключевые темы:</strong> ${topicsStr || 'основные разделы'}</p>
+            <p><strong>🎨 Стиль изложения:</strong> ${config.name}</p>
+            <p><strong>📄 Тип документа:</strong> ${config.title}</p>
+        </div><hr>`;
+        
+        return headerHtml + `
+            <h2 style="color:#388e3c; margin-top:20px;">1. ${config.sections.intro}</h2><p>${introText}</p>
+            <h2 style="color:#388e3c; margin-top:20px;">2. ${config.sections.theory}</h2><div>${theoryText}</div>
+            <h2 style="color:#388e3c; margin-top:20px;">3. ${config.sections.practice}</h2><div>${practicalText}</div>
+            <h2 style="color:#388e3c; margin-top:20px;">4. ${config.sections.control}</h2><div>${controlText}</div>
+            <h2 style="color:#388e3c; margin-top:20px;">5. ${config.sections.literature}</h2><div>${bibliographyText}</div>
+            <hr style="margin: 20px 0;">${enrichBlock}
+        `;
+    }
+    
+    function updatePreview() {
+        let discipline = document.getElementById('disciplineSelect').selectedOptions[0]?.textContent.replace(/^[^a-zа-яё]+/i,'') || "Выбранная дисциплина";
+        let audience = document.getElementById('audienceSelect').value;
+        let topics = document.getElementById('topics').value;
+        let templateStyle = document.getElementById('templateSelect').value;
+        let llm = document.getElementById('llmEnrich').checked;
+        if (audience === "0") audience = "Слушатели";
+        if (!topics) topics = "основные темы";
+        document.getElementById('methodicPreview').innerHTML = generateMethodicContent(discipline, audience, topics, templateStyle, llm);
+    }
+    
+    function showUserMessage(msg, type='info') {
+        document.querySelectorAll('.toast-notification').forEach(t=>t.remove());
+        let toast = document.createElement('div');
+        toast.className = `toast-notification ${type==='error'?'error':type==='success'?'success':''}`;
+        toast.innerHTML = `${type==='error'?'⚠️':type==='success'?'✅':'ℹ️'} ${msg}`;
+        document.body.appendChild(toast);
+        setTimeout(()=>toast.remove(),4000);
+    }
+    
+    function getAllTemplates() { return [...systemTemplates, ...customTemplates]; }
+    
+    const systemTemplates = [
+        { id: "academic", name: "Академический", icon: "fas fa-landmark", badge: "Академический", templateType: "academic", discipline: "Методология", audience: "Магистранты", topics: "Научная этика, структура", isCustom: false },
+        { id: "scientific", name: "Научный", icon: "fas fa-microscope", badge: "Научный", templateType: "scientific", discipline: "Методология науки", audience: "Исследователи", topics: "Гипотеза, эксперимент", isCustom: false },
+        { id: "daily", name: "Бытовой", icon: "fas fa-home", badge: "Практичный", templateType: "daily", discipline: "Жизненные навыки", audience: "Все желающие", topics: "Применение в жизни", isCustom: false },
+        { id: "business", name: "Бизнес", icon: "fas fa-chart-line", badge: "Деловой", templateType: "business", discipline: "Управление", audience: "Менеджеры", topics: "KPI, стратегия", isCustom: false }
+    ];
+    
+    function populateDisciplines() {
+        const sel = document.getElementById('disciplineSelect');
+        const tsel = document.getElementById('templateDisciplineSelect');
+        sel.innerHTML = '<option value="0">📚 Выберите дисциплину...</option>';
+        tsel.innerHTML = '<option value="0">Выберите дисциплину...</option>';
+        for (let key in disciplinesDB) {
+            let opt = document.createElement('option'); opt.value = key; opt.textContent = disciplinesDB[key].name;
+            sel.appendChild(opt); tsel.appendChild(opt.cloneNode(true));
+        }
+    }
+    
+    function populateAudiences(disciplineKey, targetId = 'audienceSelect') {
+        const sel = document.getElementById(targetId);
+        sel.innerHTML = '<option value="0">👥 Выберите аудиторию...</option>';
+        if (disciplineKey && disciplinesDB[disciplineKey]) {
+            disciplinesDB[disciplineKey].audience.forEach(aud => { let opt = document.createElement('option'); opt.value = aud; opt.textContent = aud; sel.appendChild(opt); });
+        }
+    }
+    
+    function populateTopics(disciplineKey, targetSelectId = 'topicSelect') {
+        const sel = document.getElementById(targetSelectId);
+        sel.innerHTML = '<option value="0">📌 Выберите тему...</option>';
+        if (disciplineKey && topicsDB[disciplineKey]) {
+            topicsDB[disciplineKey].forEach(topic => { let opt = document.createElement('option'); opt.value = topic; opt.textContent = topic; sel.appendChild(opt); });
+        }
+    }
+    
+    function updateSelectedTopicsDisplay(containerId, topicsList, hiddenInputId) {
+        const container = document.getElementById(containerId);
+        const hidden = document.getElementById(hiddenInputId);
+        container.innerHTML = '';
+        topicsList.forEach((topic, idx) => {
+            let tag = document.createElement('div'); tag.className = 'topic-tag';
+            tag.innerHTML = `${topic} <button type="button" data-idx="${idx}">✕</button>`;
+            tag.querySelector('button').onclick = () => { topicsList.splice(idx,1); updateSelectedTopicsDisplay(containerId, topicsList, hiddenInputId); };
+            container.appendChild(tag);
+        });
+        hidden.value = topicsList.join(', ');
+        if (hiddenInputId === 'topics') updatePreview();
+    }
+    
+    function saveCurrentToHistory() {
+        if(!currentUser){ showUserMessage('Необходима авторизация','error'); return; }
+        let discipline = document.getElementById('disciplineSelect').selectedOptions[0]?.textContent.replace(/^[^a-zа-яё]+/i,'') || "Дисциплина";
+        let audience = document.getElementById('audienceSelect').value;
+        let topics = document.getElementById('topics').value;
+        let templateStyle = document.getElementById('templateSelect').value;
+        let llm = document.getElementById('llmEnrich').checked;
+        let currentContent = document.getElementById('methodicPreview').innerHTML;
+        if (audience === "0") { showUserMessage('Выберите аудиторию','error'); return; }
+        if (!topics) { showUserMessage('Добавьте тему','error'); return; }
+        addToHistory(discipline, audience, topics, templateStyle, llm, currentContent, true);
+        showUserMessage('✅ Версия сохранена в историю!', 'success');
+    }
+    
+    function addToHistory(discipline, audience, topics, templateStyle, llm, htmlContent, hasEdited=false){ 
+        const newId = `hist_${Date.now()}_${Math.random().toString(36).substr(2,8)}`;
+        generationHistory.unshift({ id: newId, discipline, audience, topics, templateType: templateStyle, llm, htmlContent, hasEdited, date: new Date().toISOString() }); 
+        if(generationHistory.length>50) generationHistory.pop(); 
+        if(currentUser) saveUserData(); 
+        updateHistoryPanel(); 
+    }
+    
+    function updateHistoryPanel() {
+        let container = document.getElementById('historyListContainer');
+        if(!container) return;
+        if(generationHistory.length===0){ container.innerHTML='<div class="history-empty"><i class="fas fa-folder-open"></i> История пуста</div>'; return; }
+        const sortedHistory = [...generationHistory].sort((a, b) => {
+            let aFav = historyFavorites.includes(a.id), bFav = historyFavorites.includes(b.id);
+            if (aFav && !bFav) return -1;
+            if (!aFav && bFav) return 1;
+            return 0;
+        });
+        container.innerHTML = sortedHistory.map((h) => {
+            const originalIdx = generationHistory.findIndex(orig => orig.id === h.id);
+            const isFavorite = historyFavorites.includes(h.id);
+            const favClass = isFavorite ? 'favorite-history-item' : '';
+            const favIcon = isFavorite ? 'fas fa-star' : 'far fa-star';
+            const favActive = isFavorite ? 'active' : '';
+            const editedBadge = h.hasEdited ? '<span class="edited-badge"><i class="fas fa-pencil-alt"></i> edited</span>' : '';
+            return `<div class="history-item ${favClass}" data-idx="${originalIdx}">
+                <div class="history-item-content">
+                    <div><strong>📄 ${h.discipline}</strong> ${editedBadge} <span style="font-size:0.7rem;">(${h.templateType})</span></div>
+                    <div style="font-size:0.75rem;">👥 ${h.audience} | 📅 ${new Date(h.date).toLocaleString()}</div>
+                </div>
+                <div class="history-item-actions">
+                    <button class="favorite-history-btn ${favActive}" data-idx="${originalIdx}"><i class="${favIcon}"></i></button>
+                    <button class="delete-history-btn" data-idx="${originalIdx}"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>`;
+        }).join('');
+        
+        document.querySelectorAll('#historyListContainer .history-item-content').forEach(el=>el.addEventListener('click',(e)=>{ 
+            let item=el.closest('.history-item'), idx=parseInt(item.getAttribute('data-idx')), h=generationHistory[idx]; 
+            if(h){ 
+                for(let key in disciplinesDB) if(disciplinesDB[key].name.includes(h.discipline)){ 
+                    document.getElementById('disciplineSelect').value=key; populateAudiences(key); populateTopics(key,'topicSelect'); break; 
+                } 
+                document.getElementById('audienceSelect').value=h.audience; 
+                document.getElementById('topics').value=h.topics; 
+                document.getElementById('templateSelect').value=h.templateType||'academic'; 
+                document.getElementById('llmEnrich').checked=h.llm!==undefined?h.llm:true; 
+                document.getElementById('methodicPreview').innerHTML = h.htmlContent; 
+                showUserMessage(`Загружена версия из истории ${h.hasEdited ? '(с вашими правками)' : ''}`,"success"); 
+                document.querySelector('.tab-btn[data-tab="constructor"]').click(); 
+            } 
+        }));
+        
+        document.querySelectorAll('.favorite-history-btn').forEach(btn=>btn.addEventListener('click',(e)=>{ e.stopPropagation(); let idx=parseInt(btn.getAttribute('data-idx')); 
+            const itemId = generationHistory[idx]?.id; const favIndex = historyFavorites.indexOf(itemId);
+            if (favIndex === -1) { historyFavorites.push(itemId); showUserMessage('⭐ В избранном', 'success'); } 
+            else { historyFavorites.splice(favIndex, 1); showUserMessage('💔 Удалено', 'info'); }
+            if(currentUser) saveUserData(); updateHistoryPanel(); 
+        }));
+        
+        document.querySelectorAll('.delete-history-btn').forEach(btn=>btn.addEventListener('click',(e)=>{ e.stopPropagation(); let idx=parseInt(btn.getAttribute('data-idx')); if(confirm('Удалить запись?')){ const removedId = generationHistory[idx].id; historyFavorites = historyFavorites.filter(id => id !== removedId); generationHistory.splice(idx,1); if(currentUser) saveUserData(); updateHistoryPanel(); showUserMessage('Удалено','success'); } }));
+    }
+    
+    function clearHistory(){ if(confirm('Очистить историю?')){ generationHistory=[]; historyFavorites=[]; if(currentUser) saveUserData(); updateHistoryPanel(); showUserMessage('История очищена','success'); } }
+    
+    function updateRatingDisplay(){
+        if(ratings.length===0){ document.getElementById('averageRatingDisplay').innerHTML='⭐ Средняя оценка: пока нет оценок'; document.getElementById('reviewsList').innerHTML='<div>Отзывы появятся здесь</div>'; return; }
+        let avg=(ratings.reduce((a,r)=>a+r.rating,0)/ratings.length).toFixed(1);
+        document.getElementById('averageRatingDisplay').innerHTML=`⭐ Средняя оценка: ${avg} / 5 (${ratings.length} оценок)`;
+        document.getElementById('reviewsList').innerHTML=ratings.slice().reverse().map(r=>`<div class="review-item"><div class="review-stars">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</div><div>${r.comment||'Без комментария'}</div></div>`).join('');
+    }
+    
+    function getSortedTemplates() {
+        const allTemplates = getAllTemplates();
+        return [...allTemplates].sort((a, b) => {
+            const aIsFav = favorites.some(f => f.id === a.id);
+            const bIsFav = favorites.some(f => f.id === b.id);
+            if (aIsFav && !bIsFav) return -1;
+            if (!aIsFav && bIsFav) return 1;
+            return 0;
+        });
+    }
+    
+    function renderTemplates() {
+        const container = document.getElementById('templatesGrid');
+        if(!container) return;
+        const sorted = getSortedTemplates();
+        container.innerHTML = sorted.map(tmpl => { 
+            let isFav = favorites.some(f=>f.id===tmpl.id); 
+            let starIcon = isFav ? 'fas fa-star' : 'far fa-star'; 
+            let starActive = isFav ? 'active' : ''; 
+            let isCustom = tmpl.isCustom===true; 
+            return `<div class="template-card ${isCustom?'custom-template':''}" data-template-type="${tmpl.templateType}" data-discipline="${tmpl.discipline}" data-audience="${tmpl.audience}" data-topics="${tmpl.topics}" data-fav-id="${tmpl.id}" data-fav-name="${tmpl.name}">
+                <i class="${tmpl.icon||'fas fa-file-alt'}"></i>
+                <h4>${tmpl.name}</h4>
+                <div>${isCustom?'Мой шаблон':tmpl.badge}</div>
+                <button class="use-template-btn">Использовать</button>
+                <div class="favorite-star ${starActive}" data-fav-id="${tmpl.id}" data-fav-name="${tmpl.name}"><i class="${starIcon}"></i></div>
+                ${isCustom?`<button class="delete-template-btn" data-id="${tmpl.id}"><i class="fas fa-trash-alt"></i></button>`:''}
+            </div>`; 
+        }).join('');
+        attachTemplateEvents();
+    }
+    
+    function attachTemplateEvents() {
+        document.querySelectorAll('.use-template-btn').forEach(btn=>btn.addEventListener('click',(e)=>{ let card=btn.closest('.template-card'); if(card){ 
+            document.getElementById('templateSelect').value = card.getAttribute('data-template-type') || 'academic';
+            let disciplineName = card.getAttribute('data-discipline');
+            let foundKey = null;
+            for(let key in disciplinesDB) if(disciplinesDB[key].name === disciplineName) { foundKey = key; break; }
+            if(foundKey) {
+                document.getElementById('disciplineSelect').value = foundKey;
+                populateAudiences(foundKey);
+                populateTopics(foundKey, 'topicSelect');
+            }
+            document.getElementById('audienceSelect').value = card.getAttribute('data-audience');
+            let topicsVal = card.getAttribute('data-topics') || '';
+            document.getElementById('topics').value = topicsVal;
+            currentTopicsList = topicsVal.split(',').map(t=>t.trim()).filter(t=>t);
+            updateSelectedTopicsDisplay('selectedTopics', currentTopicsList, 'topics');
+            document.getElementById('llmEnrich').checked = true;
+            updatePreview();
+            showUserMessage(`✅ Шаблон загружен`,"success");
+            document.querySelector('.tab-btn[data-tab="constructor"]').click();
+        } }));
+        
+        document.querySelectorAll('.favorite-star').forEach(star=>star.addEventListener('click',(e)=>{ 
+            e.stopPropagation(); 
+            let favId = star.getAttribute('data-fav-id');
+            let favName = star.getAttribute('data-fav-name');
+            let card = star.closest('.template-card');
+            let discipline = card.getAttribute('data-discipline');
+            let audience = card.getAttribute('data-audience');
+            let topics = card.getAttribute('data-topics');
+            let templateType = card.getAttribute('data-template-type');
+            
+            let idx = favorites.findIndex(f=>f.id===favId);
+            if(idx===-1){ 
+                favorites.push({id:favId, name:favName, discipline, audience, topics, templateType}); 
+                showUserMessage(`⭐ "${favName}" добавлен в избранное`,"success"); 
+            } else { 
+                favorites.splice(idx,1); 
+                showUserMessage(`💔 "${favName}" удалён из избранного`,"info"); 
+            } 
+            if(currentUser) saveUserData(); 
+            renderTemplates();
+            updateFavoritesPanel(); 
+        }));
+        
+        document.querySelectorAll('.delete-template-btn').forEach(btn=>btn.addEventListener('click',(e)=>{ e.stopPropagation(); let tid=btn.getAttribute('data-id'); if(confirm('Удалить шаблон?')){ customTemplates=customTemplates.filter(t=>t.id!==tid); favorites=favorites.filter(f=>f.id!==tid); if(currentUser) saveUserData(); renderTemplates(); updateFavoritesPanel(); showUserMessage('Шаблон удалён','success'); } }));
+    }
+    
+    function updateFavoritesPanel() {
+        let container = document.getElementById('favoritesList');
+        if(!container) return;
+        if(favorites.length===0) container.innerHTML = '(нет избранных)';
+        else { 
+            const sortedFavs = [...favorites].sort((a,b) => a.name.localeCompare(b.name));
+            container.innerHTML = sortedFavs.map(f=>`<div class="favorite-item" data-fav-id="${f.id}">⭐ ${f.name}</div>`).join('');
+            document.querySelectorAll('.favorite-item').forEach(el=>el.addEventListener('click',()=>{ 
+                let fav=favorites.find(f=>f.id===el.getAttribute('data-fav-id')); 
+                if(fav){ 
+                    let foundKey = null;
+                    for(let key in disciplinesDB) if(disciplinesDB[key].name === fav.discipline) { foundKey = key; break; }
+                    if(foundKey) {
+                        document.getElementById('disciplineSelect').value = foundKey;
+                        populateAudiences(foundKey);
+                        populateTopics(foundKey, 'topicSelect');
+                    }
+                    document.getElementById('audienceSelect').value = fav.audience;
+                    document.getElementById('topics').value = fav.topics;
+                    document.getElementById('templateSelect').value = fav.templateType || 'academic';
+                    document.getElementById('llmEnrich').checked = true;
+                    updatePreview();
+                    showUserMessage(`Избранное: ${fav.name}`,"success");
+                    document.querySelector('.tab-btn[data-tab="constructor"]').click();
+                } 
+            })); 
+        }
+        renderTemplates();
+    }
+    
+    function refreshAll() { updateHistoryPanel(); renderTemplates(); updateFavoritesPanel(); updateRatingDisplay(); populateDisciplines(); updatePreview(); }
+    
+    // ==================== РАБОЧАЯ ФУНКЦИЯ DOCX (без внешней библиотеки) ====================
+    async function exportDocx() {
+        if(!currentUser){ showUserMessage('Авторизуйтесь','error'); return; }
+        try {
+            showUserMessage('Создание DOCX...', 'info');
+            
+            let discipline = document.getElementById('disciplineSelect').selectedOptions[0]?.textContent.replace(/[^\wа-яё]/gi, '_') || "Методичка";
+            let contentDiv = document.getElementById('methodicPreview');
+            
+            // Клонируем содержимое
+            let clone = contentDiv.cloneNode(true);
+            clone.querySelectorAll('.edit-hint, .demo-badge').forEach(el => el.remove());
+            
+            // Создаем HTML-структуру для Word
+            let styles = `
+                <style>
+                    body { 
+                        font-family: 'Times New Roman', Times, serif; 
+                        margin: 2cm; 
+                        line-height: 1.4;
+                        font-size: 12pt;
+                    }
+                    h1 { color: #2e7d32; font-size: 20pt; margin-top: 20px; margin-bottom: 10px; }
+                    h2 { color: #388e3c; font-size: 16pt; margin-top: 15px; margin-bottom: 8px; }
+                    p { margin: 0 0 10px 0; text-align: justify; }
+                    .llm-note { background: #f0f7f0; padding: 10px; border-left: 3px solid #4caf50; margin: 15px 0; }
+                    strong { font-weight: bold; }
+                    hr { margin: 20px 0; }
+                </style>
+            `;
+            
+            let fullHtml = `<!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="UTF-8">
+                <title>${discipline}</title>
+                ${styles}
+            </head>
+            <body>
+                ${clone.innerHTML}
+            </body>
+            </html>`;
+            
+            // Создаем Blob с типом application/msword
+            const blob = new Blob([fullHtml], { type: 'application/msword' });
+            saveAs(blob, `Методичка_${discipline}.doc`);
+            showUserMessage('DOCX успешно скачан! (откроется в Word)', 'success');
+            
+        } catch(e) { 
+            console.error('DOCX ошибка:', e);
+            showUserMessage('Ошибка при создании DOCX: ' + (e.message || 'попробуйте другой формат'), 'error'); 
+        }
+    }
+    
+    async function exportPDF(){ 
+        if(!currentUser){ showUserMessage('Авторизуйтесь','error'); return; } 
+        showUserMessage('Подготовка PDF...','info'); 
+        let preview = document.getElementById('methodicPreview').cloneNode(true); 
+        let wrap = document.createElement('div'); 
+        wrap.style.padding = '20px'; 
+        wrap.style.background = 'white'; 
+        wrap.appendChild(preview); 
+        html2pdf().set({margin: 0.5, filename: 'methodic.pdf'}).from(wrap).save(); 
+        setTimeout(()=> showUserMessage('PDF скачан','success'), 1500); 
+    }
+    
+    function exportMarkdown(){ 
+        if(!currentUser){ showUserMessage('Авторизуйтесь','error'); return; } 
+        let disc = document.getElementById('disciplineSelect').selectedOptions[0]?.textContent.replace(/[^\wа-яё]/gi, '_') || "Doc"; 
+        let aud = document.getElementById('audienceSelect').value; 
+        let top = document.getElementById('topics').value; 
+        let cont = document.getElementById('methodicPreview').innerText; 
+        let md = `# ${disc}\n\n**Аудитория:** ${aud}\n\n**Темы:** ${top}\n\n---\n\n${cont}`; 
+        saveAs(new Blob([md], {type: 'text/markdown'}), 'methodic.md'); 
+        showUserMessage('Markdown сохранён','success'); 
+    }
+    
+    function exportHTML(){ 
+        if(!currentUser){ showUserMessage('Авторизуйтесь','error'); return; } 
+        let disc = document.getElementById('disciplineSelect').selectedOptions[0]?.textContent.replace(/[^\wа-яё]/gi, '_') || "Doc"; 
+        let cont = document.getElementById('methodicPreview').innerHTML; 
+        let full = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${disc}</title><style>body{font-family:Inter,sans-serif;max-width:1000px;margin:40px auto;padding:20px;line-height:1.6}h1{color:#2e7d32;}h2{color:#388e3c;}</style></head><body>${cont}</body></html>`; 
+        saveAs(new Blob([full], {type: 'text/html'}), 'methodic.html'); 
+        showUserMessage('HTML готов','success'); 
+    }
+    
+    function exportJSON(){ 
+        if(!currentUser){ showUserMessage('Авторизуйтесь','error'); return; } 
+        let disc = document.getElementById('disciplineSelect').selectedOptions[0]?.textContent.replace(/[^\wа-яё]/gi, '_') || "Doc"; 
+        let aud = document.getElementById('audienceSelect').value; 
+        let top = document.getElementById('topics').value; 
+        let tmpl = document.getElementById('templateSelect').value; 
+        let llm = document.getElementById('llmEnrich').checked; 
+        let cont = document.getElementById('methodicPreview').innerHTML; 
+        let obj = {title: disc, audience: aud, topics: top.split(','), templateType: tmpl, enriched: llm, content_html: cont}; 
+        saveAs(new Blob([JSON.stringify(obj, null, 2)], {type: 'application/json'}), 'methodic.json'); 
+        showUserMessage('JSON экспортирован','success'); 
+    }
+    
+    function exportTXT(){ 
+        if(!currentUser){ showUserMessage('Авторизуйтесь','error'); return; } 
+        let disc = document.getElementById('disciplineSelect').selectedOptions[0]?.textContent.replace(/[^\wа-яё]/gi, '_') || "Doc"; 
+        let aud = document.getElementById('audienceSelect').value; 
+        let top = document.getElementById('topics').value; 
+        let cont = document.getElementById('methodicPreview').innerText; 
+        let plain = `${disc}\nАудитория: ${aud}\nТемы: ${top}\n\n${cont}`; 
+        saveAs(new Blob([plain], {type: 'text/plain'}), 'methodic.txt'); 
+        showUserMessage('TXT сохранён','success'); 
+    }
+    
+    function exportEPUB(){ 
+        if(!currentUser){ showUserMessage('Авторизуйтесь','error'); return; } 
+        showUserMessage('EPUB (демо-версия)','info'); 
+        let disc = document.getElementById('disciplineSelect').selectedOptions[0]?.textContent.replace(/[^\wа-яё]/gi, '_') || "Doc"; 
+        let cont = document.getElementById('methodicPreview').innerHTML;
+        let epubContent = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>${disc}</title></head>
+<body>${cont}</body>
+</html>`;
+        saveAs(new Blob([epubContent], {type: 'application/epub+zip'}), 'methodic.epub'); 
+        showUserMessage('EPUB готов (демо)','success'); 
+    }
+    
+    document.getElementById('exportDocxBtn').addEventListener('click', exportDocx);
+    document.getElementById('exportPDFBtn').addEventListener('click', exportPDF);
+    document.getElementById('exportMarkdownBtn').addEventListener('click', exportMarkdown);
+    document.getElementById('exportHTMLBtn').addEventListener('click', exportHTML);
+    document.getElementById('exportJSONBtn').addEventListener('click', exportJSON);
+    document.getElementById('exportTXTBtn').addEventListener('click', exportTXT);
+    document.getElementById('exportEPUBBtn').addEventListener('click', exportEPUB);
+    document.getElementById('clearHistoryBtn').addEventListener('click', clearHistory);
+    document.getElementById('saveToHistoryBtn').addEventListener('click', saveCurrentToHistory);
+    
+    document.getElementById('disciplineSelect').addEventListener('change',(e)=>{ let val=e.target.value; if(val!=='0'){ populateAudiences(val); populateTopics(val,'topicSelect'); currentTopicsList=[]; updateSelectedTopicsDisplay('selectedTopics',currentTopicsList,'topics'); }else{ document.getElementById('audienceSelect').innerHTML='<option value="0">👥 Выберите аудиторию...</option>'; document.getElementById('topicSelect').innerHTML='<option value="0">📌 Выберите тему...</option>'; } });
+    document.getElementById('addTopicBtn').addEventListener('click',()=>{ let sel=document.getElementById('topicSelect'); let topic=sel.value; if(topic&&topic!=='0'&&!currentTopicsList.includes(topic)){ currentTopicsList.push(topic); updateSelectedTopicsDisplay('selectedTopics',currentTopicsList,'topics'); } });
+    document.getElementById('templateSelect').addEventListener('change', () => updatePreview());
+    document.getElementById('llmEnrich').addEventListener('change', () => updatePreview());
+    
+    document.getElementById('generateBtn').addEventListener('click',()=>{ 
+        if(!currentUser){ showUserMessage('Необходима авторизация','error'); return; }
+        let discipline=document.getElementById('disciplineSelect').value, audience=document.getElementById('audienceSelect').value, topics=document.getElementById('topics').value; 
+        if(discipline==='0'){ showUserMessage('Выберите дисциплину','error'); return; } 
+        if(audience==='0'){ showUserMessage('Выберите аудиторию','error'); return; } 
+        if(!topics){ showUserMessage('Добавьте тему','error'); return; } 
+        showUserMessage('Генерация...','info'); 
+        setTimeout(()=>{ 
+            try{ 
+                updatePreview(); 
+                let data={ discipline:document.getElementById('disciplineSelect').selectedOptions[0]?.textContent.replace(/[^\wа-яё]/gi, '')||"Дисциплина", audience:document.getElementById('audienceSelect').value, topics:document.getElementById('topics').value, template:document.getElementById('templateSelect').value, llm:document.getElementById('llmEnrich').checked, htmlContent:document.getElementById('methodicPreview').innerHTML }; 
+                addToHistory(data.discipline,data.audience,data.topics,data.template,data.llm,data.htmlContent,false); 
+                showUserMessage('Готово! Текст можно редактировать','success'); 
+            }catch(e){ showUserMessage('Ошибка','error'); } 
+        },500); 
+    });
+    
+    let selectedRating=0;
+    document.querySelectorAll('.star').forEach(s=>s.addEventListener('click',()=>{ selectedRating=parseInt(s.getAttribute('data-value')); document.querySelectorAll('.star').forEach(ss=>{ if(parseInt(ss.getAttribute('data-value'))<=selectedRating) ss.classList.add('active'); else ss.classList.remove('active'); }); }));
+    document.getElementById('submitRatingBtn').addEventListener('click',()=>{ if(selectedRating===0){ showUserMessage('Выберите оценку','error'); return; } let rev=document.getElementById('reviewText').value.trim(); ratings.push({rating:selectedRating,comment:rev,date:new Date().toISOString()}); if(currentUser) saveUserData(); selectedRating=0; document.querySelectorAll('.star').forEach(s=>s.classList.remove('active')); document.getElementById('reviewText').value=''; updateRatingDisplay(); showUserMessage('Спасибо!','success'); });
+    
+    let darkMode=localStorage.getItem('docmind_dark')==='true'; if(darkMode) document.body.classList.add('dark-mode');
+    document.getElementById('themeToggleBtn').addEventListener('click',()=>{ document.body.classList.toggle('dark-mode'); localStorage.setItem('docmind_dark',document.body.classList.contains('dark-mode')); showUserMessage(document.body.classList.contains('dark-mode')?'🌙 Тёмная тема':'☀️ Светлая тема','success'); });
+    document.querySelectorAll('.faq-question').forEach(q=>q.addEventListener('click',()=>q.closest('.faq-item').classList.toggle('open')));
+    
+    const templateModal = document.getElementById('templateModal');
+    document.getElementById('createTemplateBtn').addEventListener('click',()=>{ templateTopicsList=[]; updateSelectedTopicsDisplay('templateSelectedTopics',templateTopicsList,'templateTopicsValue'); document.getElementById('templateName').value=''; document.getElementById('templateDisciplineSelect').value='0'; document.getElementById('templateAudienceSelect').innerHTML='<option value="0">Выберите аудиторию...</option>'; document.getElementById('templateTopicSelect').innerHTML='<option value="0">Выберите тему...</option>'; templateModal.style.display='block'; });
+    document.getElementById('templateDisciplineSelect').addEventListener('change',(e)=>{ let val=e.target.value; if(val!=='0'){ populateAudiences(val,'templateAudienceSelect'); populateTopics(val,'templateTopicSelect'); } });
+    document.getElementById('addTemplateTopicBtn').addEventListener('click',()=>{ let sel=document.getElementById('templateTopicSelect'); let topic=sel.value; if(topic&&topic!=='0'&&!templateTopicsList.includes(topic)){ templateTopicsList.push(topic); updateSelectedTopicsDisplay('templateSelectedTopics',templateTopicsList,'templateTopicsValue'); } });
+    document.querySelector('#templateModal .save-modal').addEventListener('click',()=>{ let name=document.getElementById('templateName').value.trim(); let discKey=document.getElementById('templateDisciplineSelect').value; let audience=document.getElementById('templateAudienceSelect').value; let topicsVal=document.getElementById('templateTopicsValue').value; if(!name){ showUserMessage('Введите название','error'); return; } if(discKey==='0'){ showUserMessage('Выберите дисциплину','error'); return; } if(audience==='0'){ showUserMessage('Выберите аудиторию','error'); return; } if(!topicsVal){ showUserMessage('Добавьте тему','error'); return; } let newId='custom_'+Date.now()+'_'+Math.random().toString(36).substr(2,8); let newTemplate={id:newId,name:name,icon:'fas fa-user-plus',badge:'Пользовательский',templateType:'academic',discipline:disciplinesDB[discKey].name,audience:audience,topics:topicsVal,isCustom:true}; customTemplates.push(newTemplate); if(currentUser) saveUserData(); templateModal.style.display='none'; renderTemplates(); updateFavoritesPanel(); showUserMessage(`Шаблон "${name}" создан!`,'success'); });
+    document.querySelectorAll('#templateModal .close-modal, #templateModal .cancel-modal').forEach(el=>el.addEventListener('click',()=>templateModal.style.display='none'));
+    window.addEventListener('click',(e)=>{ if(e.target===templateModal) templateModal.style.display='none'; if(e.target===authModal) authModal.style.display='none'; if(e.target===document.getElementById('profileModal')) document.getElementById('profileModal').style.display='none'; });
+    
+    const tabs=document.querySelectorAll('.tab-btn'), contents={constructor:document.getElementById('constructorTab'),history:document.getElementById('historyTab'),templates:document.getElementById('templatesTab'),faq:document.getElementById('faqTab')};
+    tabs.forEach(btn=>btn.addEventListener('click',()=>{ let id=btn.getAttribute('data-tab'); Object.keys(contents).forEach(k=>{ if(contents[k]) contents[k].classList.remove('active-tab'); }); if(contents[id]) contents[id].classList.add('active-tab'); tabs.forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }));
+    
+    populateDisciplines(); updateHistoryPanel(); renderTemplates(); updateFavoritesPanel(); updateRatingDisplay();
+    if(currentUser) refreshAll();
+</script>
+</body>
+</html>
